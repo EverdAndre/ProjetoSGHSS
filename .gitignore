@@ -1,0 +1,15 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.db
+*.log
+*.sqlite
+*.pdb
+*.exe
+*.dll
+*.cache
+node_modules/
+.env
+docker-compose.override.yml

@@ -1,0 +1,6 @@
+@SGHSS.Api_HostAddress = http://localhost:5128
+
+GET {{SGHSS.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
