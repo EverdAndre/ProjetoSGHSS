@@ -21,7 +21,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-// Configure o HTTP request 
+// Configura o HTTP request 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
