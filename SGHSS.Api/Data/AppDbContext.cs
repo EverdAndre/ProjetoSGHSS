@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Usuario> Usuarios => Set<Usuario>();
     public DbSet<ProfissionalSaude> ProfissionaisSaude => Set<ProfissionalSaude>();
     public DbSet<Agendamento> Agendamentos => Set<Agendamento>();
+    public DbSet<Pagamento> Pagamentos => Set<Pagamento>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -63,6 +64,15 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(a => a.IdPaciente)
             .OnDelete(DeleteBehavior.Restrict);
-        
+        //Pagamento - Agendamento
+        modelBuilder.Entity<Pagamento>()
+            .HasOne(p => p.Agendamento)
+            .WithOne()
+            .HasForeignKey<Pagamento>(p => p.IdAgendamento)
+            .OnDelete(DeleteBehavior.Restrict);
+            // Formata valor pago para ter 2 casas decimais
+            modelBuilder.Entity<Pagamento>()
+            .Property(p => p.ValorPago)
+            .HasPrecision(10,2);
     }
 }
