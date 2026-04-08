@@ -8,5 +8,6 @@ public class ProfissionalSaude
     public Pessoa Pessoa { get; set; } = null!;
     public string CodRegProf { get; set; } = string.Empty;
     public string Especialidade { get; set; } = string.Empty;
+    public bool Ativo { get; set; } = true;
     public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
 }
