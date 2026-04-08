@@ -9,5 +9,6 @@ public class Pessoa
     public DateTime DataNascimento { get; set; }
     public string Endereco { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
-    public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+    public DateTime CriadoEm { get; set; } = DateTime.Now;
+    public bool Ativo { get; set; } = true;
 }
