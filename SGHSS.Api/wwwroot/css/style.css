@@ -1,0 +1,38 @@
+/* Fundo da tela */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d6efd, #6ea8fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Card de login */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* Título */
+.login-title {
+    font-weight: 700;
+    color: #0d6efd;
+}
+
+/* Logo */
+.logo-box {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #e9f2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0d6efd;
+    margin: 0 auto 16px auto;
+}

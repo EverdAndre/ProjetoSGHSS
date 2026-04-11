@@ -19,7 +19,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Paciente>()
             .HasOne(p => p.Pessoa)
-            .WithOne()
+            .WithOne(p => p.Paciente)
             .HasForeignKey<Paciente>(p => p.IdPessoa)
             .IsRequired();
 
@@ -29,22 +29,24 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Usuario>()
             .HasOne(u => u.Pessoa)
-            .WithOne()
+            .WithOne(p => p.Usuario)
             .HasForeignKey<Usuario>(u => u.IdPessoa)
             .IsRequired();
 
         modelBuilder.Entity<Usuario>()
             .HasIndex(u => u.IdPessoa)
             .IsUnique();
-
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(u => u.Email)
+            .IsUnique();    
         modelBuilder.Entity<ProfissionalSaude>()
-            .HasOne(p => p.Pessoa)
-            .WithOne()
-            .HasForeignKey<ProfissionalSaude>(p => p.IdPessoa)
+            .HasOne(ps => ps.Pessoa)
+            .WithOne(p => p.ProfissionalSaude)
+            .HasForeignKey<ProfissionalSaude>(ps => ps.IdPessoa)
             .IsRequired();
 
         modelBuilder.Entity<ProfissionalSaude>()
-            .HasIndex(p => p.IdPessoa)
+            .HasIndex(ps => ps.IdPessoa)
             .IsUnique();
         //Agendamento - Usuario
         modelBuilder.Entity<Agendamento>()
