@@ -11,4 +11,7 @@ public class Pessoa
     public string Telefone { get; set; } = string.Empty;
     public DateTime CriadoEm { get; set; } = DateTime.Now;
     public bool Ativo { get; set; } = true;
+    public Usuario? Usuario { get; set; }
+    public Paciente? Paciente { get; set; }
+    public ProfissionalSaude? ProfissionalSaude { get; set; }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SGHSS.Api.Data;
@@ -8,6 +9,7 @@ namespace SGHSS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class PessoasController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -16,14 +18,14 @@ public class PessoasController : ControllerBase
     {
         _context = context;
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Pessoa>>> GetAll()
     {
         var pessoas = await _context.Pessoas.Where(p => p.Ativo).ToListAsync();
         return Ok(pessoas);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<Pessoa>> GetByIdPessoa(int id)
     {
@@ -31,7 +33,22 @@ public class PessoasController : ControllerBase
         if (pessoa == null) return NotFound("Pessoa não encontrada");
         return Ok(pessoa);
     }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpGet("buscar")]
+    public async Task<ActionResult<IEnumerable<Pessoa>>> BuscarPorNome([FromQuery] string nome)
+    {
+        if (string.IsNullOrWhiteSpace(nome))
+            return BadRequest("Informe um nome para busca");
 
+        var pessoas = await _context.Pessoas
+            .Where(p => p.Ativo && p.Nome.Contains(nome))
+            .ToListAsync();
+
+        return Ok(pessoas);
+    }
+
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<Pessoa>> CreatePessoa(Pessoa pessoa)
     {
@@ -39,6 +56,8 @@ public class PessoasController : ControllerBase
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetByIdPessoa), new { id = pessoa.IdPessoa }, pessoa);
     }
+    
+    [Authorize(Roles = "Admin")]
 
     [HttpPatch("{id}")]
     public async Task<IActionResult> PatchPessoa(int id, UpdatePessoaDto dto)
@@ -56,6 +75,7 @@ public class PessoasController : ControllerBase
         return Ok("Pessoa atualizada com sucesso");
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePessoa(int id)
     {
