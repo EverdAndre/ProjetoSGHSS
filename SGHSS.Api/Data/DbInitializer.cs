@@ -1,12 +1,25 @@
 using SGHSS.Api.Models;
+
 namespace SGHSS.Api.Data;
-// Cria usuario padrão do sistema
+
 public static class DbInitializer
 {
-    public static void Seed(AppDbContext context)
+    public static void Seed(AppDbContext context, IConfiguration configuration, IWebHostEnvironment env)
     {
+        // Se já existe usuário, não faz nada
         if (context.Usuarios.Any())
-            return; 
+            return;
+
+        // Só cria usuário automático em desenvolvimento
+        if (!env.IsDevelopment())
+            return;
+
+        var senhaInicial = configuration["Seed:AdminPassword"];
+
+        if (string.IsNullOrWhiteSpace(senhaInicial))
+        {
+            throw new InvalidOperationException("Seed:AdminPassword não configurada.");
+        }
 
         var pessoa = new Pessoa
         {
@@ -18,6 +31,7 @@ public static class DbInitializer
             CriadoEm = DateTime.Now,
             Ativo = true
         };
+
         context.Pessoas.Add(pessoa);
         context.SaveChanges();
 
@@ -25,11 +39,12 @@ public static class DbInitializer
         {
             IdPessoa = pessoa.IdPessoa,
             Email = "admin@sghss.com",
-            SenhaHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-            Perfil = PerfilUsuario .Admin,
+            SenhaHash = BCrypt.Net.BCrypt.HashPassword(senhaInicial),
+            Perfil = PerfilUsuario.Admin,
             Ativo = true,
             DataCriacao = DateTime.Now
-};
+        };
+
         context.Usuarios.Add(usuario);
         context.SaveChanges();
     }
