@@ -88,7 +88,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
-    DbInitializer.Seed(db);
+    DbInitializer.Seed(db, builder.Configuration, app.Environment);
 }
 
 // Configura o HTTP request
