@@ -22,6 +22,7 @@ public class AuthController : ControllerBase
         _context = context;
         _configuration = configuration;
     }
+
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
@@ -29,23 +30,23 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Senha))
             return BadRequest("Email e senha são obrigatórios");
 
-        var usuario = await _context.Usuarios
-            .Include(u => u.Pessoa)
+        var usuario = await _context
+            .Usuarios.Include(u => u.Pessoa)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email == dto.Email);
-        
+
         if (usuario == null)
-        return Unauthorized("Usuário ou senha inválidos");
+            return Unauthorized("Usuário ou senha inválidos");
 
         if (!usuario.Ativo)
             return Unauthorized("Usuário inativo");
-        
+
         var senhaValida = BCrypt.Net.BCrypt.Verify(dto.Senha, usuario.SenhaHash);
         if (!senhaValida)
             return Unauthorized("Usuário ou senha inválidos");
 
         var expiraEm = DateTime.UtcNow.AddHours(2);
-            int.Parse(_configuration["Jwt:ExpiraHoras"] ?? "2");
+        int.Parse(_configuration["Jwt:ExpiraHoras"] ?? "2");
 
         var claims = new List<Claim>
         {
@@ -54,7 +55,7 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Name, usuario.Pessoa.Nome),
             new Claim(ClaimTypes.Role, usuario.Perfil.ToString()),
             new Claim("IdUsuario", usuario.IdUsuario.ToString()),
-            new Claim("IdPessoa", usuario.IdPessoa.ToString())
+            new Claim("IdPessoa", usuario.IdPessoa.ToString()),
         };
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
         var credenciais = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -74,8 +75,8 @@ public class AuthController : ControllerBase
             Nome = usuario.Pessoa.Nome,
             Email = usuario.Email,
             Perfil = usuario.Perfil.ToString(),
-            ExpiraEm = expiraEm
+            ExpiraEm = expiraEm,
         };
         return Ok(resposta);
-        }
     }
+}

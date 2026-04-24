@@ -1,0 +1,220 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0d6efd, #6ea8fe);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    max-width: 1150px;
+}
+
+h1 {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+#boasVindas {
+    color: #e9ecef !important;
+    font-size: 1rem;
+}
+
+#mensagem .alert {
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.card,
+.accordion-item {
+    border: none;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.card-title,
+h4,
+h5,
+h6 {
+    font-weight: 700;
+    color: #1d3557;
+}
+
+.accordion {
+    border-radius: 16px;
+}
+
+.accordion-item + .accordion-item {
+    margin-top: 16px;
+}
+
+.accordion-button {
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 1rem 1.25rem;
+    background-color: #ffffff;
+    color: #1d3557;
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #33415c;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+    min-height: 44px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-color: #86b7fe;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    min-height: 44px;
+}
+
+#btnAgendarConsulta,
+#btnConsultorioVirtual,
+#btnFinanceiro {
+    min-height: 58px;
+    font-size: 1rem;
+    border-radius: 12px;
+    transition: all 0.2s ease-in-out;
+}
+
+#btnAgendarConsulta:hover,
+#btnConsultorioVirtual:hover,
+#btnFinanceiro:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.14);
+}
+
+#btnLogout {
+    min-width: 110px;
+}
+
+.table-responsive {
+    border-radius: 12px;
+}
+
+.table {
+    margin-bottom: 0;
+    background-color: #ffffff;
+}
+
+.table thead th {
+    background-color: #f1f5f9;
+    color: #33415c;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+#cardPessoaSelecionada {
+    border-radius: 14px !important;
+}
+
+#blocoUsuario,
+#blocoProfissional,
+#blocoPaciente {
+    background-color: #f8fbff;
+    border: 1px solid #dbeafe !important;
+    border-radius: 14px !important;
+}
+
+hr {
+    opacity: 0.15;
+}
+
+#resultado {
+    min-height: 260px;
+    white-space: pre-wrap;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    background-color: #f8f9fa;
+}
+
+pre {
+    margin-bottom: 0;
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.text-muted {
+    color: #dbe4f0 !important;
+}
+
+.form-check-label {
+    font-weight: 500;
+    color: #33415c;
+}
+
+@media (max-width: 992px) {
+    .container {
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    #boasVindas {
+        font-size: 0.95rem;
+    }
+
+    .accordion-button {
+        font-size: 0.95rem;
+    }
+
+    #btnAgendarConsulta,
+    #btnConsultorioVirtual,
+    #btnFinanceiro {
+        min-height: 52px;
+        font-size: 0.95rem;
+    }
+
+    .card,
+    .accordion-item {
+        border-radius: 14px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .d-flex.justify-content-between.align-items-center.mb-4.flex-wrap.gap-3 {
+        align-items: flex-start !important;
+    }
+
+    #btnLogout {
+        width: 100%;
+    }
+}
