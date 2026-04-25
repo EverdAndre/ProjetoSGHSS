@@ -45,8 +45,10 @@ public class AuthController : ControllerBase
         if (!senhaValida)
             return Unauthorized("Usuário ou senha inválidos");
 
-        var expiraEm = DateTime.UtcNow.AddHours(2);
-        int.Parse(_configuration["Jwt:ExpiraHoras"] ?? "2");
+        var expiraEmHoras = int.TryParse(_configuration["Jwt:ExpiresInHours"], out var horas)
+            ? horas
+            : 2;
+        var expiraEm = DateTime.UtcNow.AddHours(expiraEmHoras);
 
         var claims = new List<Claim>
         {

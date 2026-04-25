@@ -19,22 +19,44 @@ public class UsuariosController : ControllerBase
         _context = context;
     }
 
+    private async Task<ActionResult?> ValidarVinculoPerfilPessoa(int idPessoa, PerfilUsuario perfil)
+    {
+        var possuiPaciente = await _context.Pacientes.AnyAsync(p =>
+            p.IdPessoa == idPessoa && p.Ativo && p.Pessoa.Ativo
+        );
+
+        var possuiProfissional = await _context.ProfissionaisSaude.AnyAsync(p =>
+            p.IdPessoa == idPessoa && p.Ativo && p.Pessoa.Ativo
+        );
+
+        if (perfil == PerfilUsuario.Admin && (possuiPaciente || possuiProfissional))
+            return BadRequest("Usuário administrador não deve estar vinculado a paciente ou profissional.");
+
+        if (perfil == PerfilUsuario.Paciente && (!possuiPaciente || possuiProfissional))
+            return BadRequest("Usuário paciente deve estar vinculado somente a um cadastro de paciente.");
+
+        if (perfil == PerfilUsuario.ProfissionalSaude && (!possuiProfissional || possuiPaciente))
+            return BadRequest("Usuário profissional deve estar vinculado somente a um cadastro de profissional de saúde.");
+
+        return null;
+    }
+
     [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UsuarioResponseDto>>> GetAllUsuarios()
     {
         var usuarios = await _context
             .Usuarios.Include(u => u.Pessoa)
-            .Where(u => u.Ativo)
+            .Where(u => u.Ativo && u.Pessoa.Ativo)
             .Select(u => new UsuarioResponseDto
             {
                 IdUsuario = u.IdUsuario,
                 IdPessoa = u.IdPessoa,
                 NomePessoa = u.Pessoa.Nome,
                 Email = u.Email,
+                Perfil = u.Perfil,
                 Ativo = u.Ativo,
                 DataCriacao = u.DataCriacao,
-                Perfil = u.Perfil,
             })
             .ToListAsync();
 
@@ -47,16 +69,16 @@ public class UsuariosController : ControllerBase
     {
         var usuario = await _context
             .Usuarios.Include(u => u.Pessoa)
-            .Where(u => u.IdUsuario == id && u.Ativo)
+            .Where(u => u.IdUsuario == id && u.Ativo && u.Pessoa.Ativo)
             .Select(u => new UsuarioResponseDto
             {
                 IdUsuario = u.IdUsuario,
                 IdPessoa = u.IdPessoa,
                 NomePessoa = u.Pessoa.Nome,
                 Email = u.Email,
+                Perfil = u.Perfil,
                 Ativo = u.Ativo,
                 DataCriacao = u.DataCriacao,
-                Perfil = u.Perfil,
             })
             .FirstOrDefaultAsync();
 
@@ -84,9 +106,9 @@ public class UsuariosController : ControllerBase
                 IdPessoa = u.IdPessoa,
                 NomePessoa = u.Pessoa.Nome,
                 Email = u.Email,
+                Perfil = u.Perfil,
                 Ativo = u.Ativo,
                 DataCriacao = u.DataCriacao,
-                Perfil = u.Perfil,
             })
             .ToListAsync();
 
@@ -118,6 +140,10 @@ public class UsuariosController : ControllerBase
         if (emailExiste)
             return BadRequest("Email já cadastrado.");
 
+        var erroPerfil = await ValidarVinculoPerfilPessoa(dto.IdPessoa, dto.Perfil);
+        if (erroPerfil != null)
+            return erroPerfil;
+
         var usuario = new Usuario
         {
             IdPessoa = dto.IdPessoa,
@@ -137,9 +163,9 @@ public class UsuariosController : ControllerBase
             IdPessoa = usuario.IdPessoa,
             NomePessoa = pessoa.Nome,
             Email = usuario.Email,
+            Perfil = usuario.Perfil,
             Ativo = usuario.Ativo,
             DataCriacao = usuario.DataCriacao,
-            Perfil = usuario.Perfil,
         };
 
         return Ok(response);
@@ -151,7 +177,7 @@ public class UsuariosController : ControllerBase
     {
         var usuario = await _context
             .Usuarios.Include(u => u.Pessoa)
-            .FirstOrDefaultAsync(u => u.IdUsuario == id && u.Ativo);
+            .FirstOrDefaultAsync(u => u.IdUsuario == id && u.Ativo && u.Pessoa.Ativo);
 
         if (usuario == null)
             return NotFound("Usuário não encontrado.");
@@ -182,6 +208,10 @@ public class UsuariosController : ControllerBase
 
         if (dto.Perfil.HasValue)
         {
+            var erroPerfil = await ValidarVinculoPerfilPessoa(usuario.IdPessoa, dto.Perfil.Value);
+            if (erroPerfil != null)
+                return erroPerfil;
+
             usuario.Perfil = dto.Perfil.Value;
         }
 
@@ -193,9 +223,9 @@ public class UsuariosController : ControllerBase
             IdPessoa = usuario.IdPessoa,
             NomePessoa = usuario.Pessoa.Nome,
             Email = usuario.Email,
+            Perfil = usuario.Perfil,
             Ativo = usuario.Ativo,
             DataCriacao = usuario.DataCriacao,
-            Perfil = usuario.Perfil,
         };
 
         return Ok(response);

@@ -19,6 +19,11 @@ public class PessoasController : ControllerBase
         _context = context;
     }
 
+    private static string NormalizarCpf(string cpf)
+    {
+        return new string(cpf.Where(char.IsDigit).ToArray());
+    }
+
     [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PessoaResponseDto>>> GetAll()
@@ -97,13 +102,22 @@ public class PessoasController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PessoaResponseDto>> CreatePessoa(CreatePessoaDto dto)
     {
+        var cpfNormalizado = NormalizarCpf(dto.CPF);
+
+        var cpfJaExiste = await _context.Pessoas.AnyAsync(p =>
+            p.Ativo && p.CPF.Replace(".", "").Replace("-", "") == cpfNormalizado
+        );
+
+        if (cpfJaExiste)
+            return BadRequest("CPF já cadastrado.");
+
         var pessoa = new Pessoa
         {
-            Nome = dto.Nome,
-            CPF = dto.CPF,
+            Nome = dto.Nome.Trim(),
+            CPF = cpfNormalizado,
             DataNascimento = dto.DataNascimento,
-            Endereco = dto.Endereco,
-            Telefone = dto.Telefone,
+            Endereco = dto.Endereco.Trim(),
+            Telefone = dto.Telefone.Trim(),
             CriadoEm = DateTime.Now,
             Ativo = true,
         };
@@ -133,15 +147,28 @@ public class PessoasController : ControllerBase
             return NotFound("Pessoa não encontrada");
 
         if (!string.IsNullOrEmpty(dto.Nome))
-            pessoa.Nome = dto.Nome;
+            pessoa.Nome = dto.Nome.Trim();
         if (!string.IsNullOrEmpty(dto.CPF))
-            pessoa.CPF = dto.CPF;
+        {
+            var cpfNormalizado = NormalizarCpf(dto.CPF);
+
+            var cpfJaExiste = await _context.Pessoas.AnyAsync(p =>
+                p.IdPessoa != id
+                && p.Ativo
+                && p.CPF.Replace(".", "").Replace("-", "") == cpfNormalizado
+            );
+
+            if (cpfJaExiste)
+                return BadRequest("CPF já cadastrado.");
+
+            pessoa.CPF = cpfNormalizado;
+        }
         if (dto.DataNascimento.HasValue)
             pessoa.DataNascimento = dto.DataNascimento.Value;
         if (!string.IsNullOrEmpty(dto.Endereco))
-            pessoa.Endereco = dto.Endereco;
+            pessoa.Endereco = dto.Endereco.Trim();
         if (!string.IsNullOrEmpty(dto.Telefone))
-            pessoa.Telefone = dto.Telefone;
+            pessoa.Telefone = dto.Telefone.Trim();
         if (dto.Ativo.HasValue)
             pessoa.Ativo = dto.Ativo.Value;
         await _context.SaveChangesAsync();
@@ -152,10 +179,20 @@ public class PessoasController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePessoa(int id)
     {
-        var pessoa = await _context.Pessoas.FirstOrDefaultAsync(p => p.IdPessoa == id && p.Ativo);
+        var pessoa = await _context
+            .Pessoas.Include(p => p.Usuario)
+            .Include(p => p.Paciente)
+            .Include(p => p.ProfissionalSaude)
+            .FirstOrDefaultAsync(p => p.IdPessoa == id && p.Ativo);
         if (pessoa == null)
             return NotFound("Pessoa não encontrada");
         pessoa.Ativo = false;
+        if (pessoa.Usuario != null)
+            pessoa.Usuario.Ativo = false;
+        if (pessoa.Paciente != null)
+            pessoa.Paciente.Ativo = false;
+        if (pessoa.ProfissionalSaude != null)
+            pessoa.ProfissionalSaude.Ativo = false;
         await _context.SaveChangesAsync();
         return Ok("Pessoa removida com sucesso");
     }

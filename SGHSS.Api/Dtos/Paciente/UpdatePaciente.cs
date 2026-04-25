@@ -14,6 +14,10 @@ public class UpdatePacienteDto
     public string? Telefone { get; set; }
 
     [StringLength(20)]
+    [RegularExpression(
+        @"^\d+$",
+        ErrorMessage = "O número do Cartão SUS deve conter apenas números."
+    )]
     public string? NumeroCartaoSUS { get; set; }
 
     [StringLength(10)]

@@ -2,12 +2,26 @@ const form = document.getElementById("loginForm");
 const mensagem = document.getElementById("mensagem");
 const btnLogin = document.getElementById("btnLogin");
 
-const API_BASE_URL = "http://localhost:5128";
+const API_BASE_URL = window.location.origin;
 const LOGIN_URL = `${API_BASE_URL}/api/Auth/login`;
+
+function exibirMensagem(tipo, texto) {
+    if (!mensagem) return;
+
+    mensagem.replaceChildren();
+
+    const alerta = document.createElement("div");
+    alerta.className = `alert alert-${tipo}`;
+    alerta.textContent = texto;
+
+    mensagem.appendChild(alerta);
+}
 
 form.addEventListener("submit", async function (event) {
     event.preventDefault();
-    mensagem.innerHTML = "";
+    if (mensagem) {
+        mensagem.replaceChildren();
+    }
     btnLogin.disabled = true;
     btnLogin.textContent = "Entrando...";
 
@@ -47,22 +61,14 @@ form.addEventListener("submit", async function (event) {
         localStorage.setItem("usuarioPerfil", data.perfil);
         localStorage.setItem("tokenExpiraEm", data.expiraEm);
 
-        mensagem.innerHTML = `
-            <div class="alert alert-success">
-                Login realizado com sucesso. Bem-vindo, ${data.nome}.
-            </div>
-        `;
+        exibirMensagem("success", `Login realizado com sucesso. Bem-vindo, ${data.nome}.`);
 
         setTimeout(() => {
-            window.location.href = "http://localhost:5128/pages/home.html";
+            window.location.href = "/pages/home.html";
         }, 1200);
 
     } catch (error) {
-        mensagem.innerHTML = `
-            <div class="alert alert-danger">
-                ${error.message}
-            </div>
-        `;
+        exibirMensagem("danger", error.message);
     } finally {
         btnLogin.disabled = false;
         btnLogin.textContent = "Entrar";
