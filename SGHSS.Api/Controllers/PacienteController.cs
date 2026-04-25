@@ -19,6 +19,16 @@ public class PacienteController : ControllerBase
         _context = context;
     }
 
+    private static string NormalizarCpf(string cpf)
+    {
+        return new string(cpf.Where(char.IsDigit).ToArray());
+    }
+
+    private static bool ContemApenasDigitos(string valor)
+    {
+        return valor.All(char.IsDigit);
+    }
+
     [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PacienteResponseDto>>> GetAll()
@@ -113,12 +123,22 @@ public class PacienteController : ControllerBase
         if (pessoa == null)
             return BadRequest("Pessoa não encontrada.");
 
+        var profissionalExiste = await _context.ProfissionaisSaude.AnyAsync(p =>
+            p.IdPessoa == idPessoa && p.Ativo
+        );
+
+        if (profissionalExiste)
+            return BadRequest("Esta pessoa já possui um profissional de saúde cadastrado.");
+
         var pacienteExiste = await _context.Pacientes.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
 
         if (pacienteExiste)
             return BadRequest("Esta pessoa já possui um paciente cadastrado.");
+
+        if (!ContemApenasDigitos(dto.NumeroCartaoSUS.Trim()))
+            return BadRequest("O número do Cartão SUS deve conter apenas números.");
 
         var paciente = new Paciente
         {
@@ -165,14 +185,18 @@ public class PacienteController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(dto.CPF))
         {
+            var cpfNormalizado = NormalizarCpf(dto.CPF);
+
             var cpfExiste = await _context.Pessoas.AnyAsync(p =>
-                p.IdPessoa != paciente.IdPessoa && p.Ativo && p.CPF == dto.CPF.Trim()
+                p.IdPessoa != paciente.IdPessoa
+                && p.Ativo
+                && p.CPF.Replace(".", "").Replace("-", "") == cpfNormalizado
             );
 
             if (cpfExiste)
                 return BadRequest("CPF já cadastrado.");
 
-            paciente.Pessoa.CPF = dto.CPF.Trim();
+            paciente.Pessoa.CPF = cpfNormalizado;
         }
 
         if (!string.IsNullOrWhiteSpace(dto.Nome))
@@ -182,7 +206,12 @@ public class PacienteController : ControllerBase
             paciente.Pessoa.Telefone = dto.Telefone.Trim();
 
         if (!string.IsNullOrWhiteSpace(dto.NumeroCartaoSUS))
+        {
+            if (!ContemApenasDigitos(dto.NumeroCartaoSUS.Trim()))
+                return BadRequest("O número do Cartão SUS deve conter apenas números.");
+
             paciente.NumeroCartaoSUS = dto.NumeroCartaoSUS.Trim();
+        }
 
         if (!string.IsNullOrWhiteSpace(dto.TipoSanguineo))
             paciente.TipoSanguineo = dto.TipoSanguineo.Trim();

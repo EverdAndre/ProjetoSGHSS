@@ -134,7 +134,7 @@
                                 <div class="col-md-4">
                                     <label for="cadDataNascimento" class="form-label">Data de Nascimento</label>
                                     <input type="text" class="form-control" id="cadDataNascimento"
-                                        placeholder="DD/MM/AAAA" required>
+                                        placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" required>
                                 </div>
 
                                 <div class="col-md-8">
@@ -241,7 +241,7 @@
                                 <div class="col-md-4">
                                     <label for="updDataNascimento" class="form-label">Data de Nascimento</label>
                                     <input type="text" class="form-control" id="updDataNascimento"
-                                        placeholder="DD/MM/AAAA" required>
+                                        placeholder="DD/MM/AAAA" maxlength="10" inputmode="numeric" required>
                                 </div>
 
                                 <div class="col-md-8">
@@ -290,15 +290,33 @@
 
                                     <div class="col-md-6">
                                         <label for="updSenhaUsuario" class="form-label">Senha</label>
-                                        <input type="password" class="form-control" id="updSenhaUsuario">
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="updSenhaUsuario">
+                                            <button class="btn btn-outline-secondary btn-toggle-senha" type="button"
+                                                data-target="updSenhaUsuario">
+                                                Mostrar
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="updConfirmarSenhaUsuario" class="form-label">Confirmar Senha</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="updConfirmarSenhaUsuario">
+                                            <button class="btn btn-outline-secondary btn-toggle-senha" type="button"
+                                                data-target="updConfirmarSenhaUsuario">
+                                                Mostrar
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="updPerfilUsuario" class="form-label">Perfil do Usuário</label>
                                         <select id="updPerfilUsuario" class="form-select">
                                             <option value="">Selecione</option>
-                                            <option value="Administrador">Administrador</option>
-                                            <option value="Usuario">Usuário</option>
+                                            <option value="1">Administrador</option>
+                                            <option value="2">Profissional de Saúde</option>
+                                            <option value="3">Paciente</option>
                                         </select>
                                     </div>
 
