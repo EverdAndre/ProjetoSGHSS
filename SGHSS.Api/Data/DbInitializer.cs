@@ -4,7 +4,11 @@ namespace SGHSS.Api.Data;
 
 public static class DbInitializer
 {
-    public static void Seed(AppDbContext context, IConfiguration configuration, IWebHostEnvironment env)
+    public static void Seed(
+        AppDbContext context,
+        IConfiguration configuration,
+        IWebHostEnvironment env
+    )
     {
         // Se já existe usuário, não faz nada
         if (context.Usuarios.Any())
@@ -29,7 +33,7 @@ public static class DbInitializer
             Endereco = "Rua Principal, 123",
             Telefone = "(11) 99999-9999",
             CriadoEm = DateTime.Now,
-            Ativo = true
+            Ativo = true,
         };
 
         context.Pessoas.Add(pessoa);
@@ -42,7 +46,7 @@ public static class DbInitializer
             SenhaHash = BCrypt.Net.BCrypt.HashPassword(senhaInicial),
             Perfil = PerfilUsuario.Admin,
             Ativo = true,
-            DataCriacao = DateTime.Now
+            DataCriacao = DateTime.Now,
         };
 
         context.Usuarios.Add(usuario);

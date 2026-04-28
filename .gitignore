@@ -13,3 +13,6 @@ obj/
 node_modules/
 .env
 docker-compose.override.yml
+appsettings.Development.json
+.env.*
+secrets.json
