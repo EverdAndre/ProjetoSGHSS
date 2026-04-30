@@ -21,7 +21,7 @@ jobs:
       - name: Restaurar dependências
         run: dotnet restore ProjetoSGHSS.sln
 
-      - name: Compilar solução
+      - name: Compilar Projeto
         run: dotnet build ProjetoSGHSS.sln --no-restore
 
       - name: Executar testes
