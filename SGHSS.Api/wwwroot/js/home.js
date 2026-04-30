@@ -34,7 +34,6 @@ const updDataNascimentoCampo = document.getElementById("updDataNascimento");
 if (!token) {
     window.location.href = "/pages/login.html";
 }
-
 if (boasVindas) {
     boasVindas.textContent = `Bem-vindo, ${usuarioNome ?? "usuário"}`;
 }
@@ -46,7 +45,6 @@ aplicarControleAcessoPorPerfil();
 // Base comum
 function ocultarElemento(elemento, deveOcultar) {
     if (!elemento) return;
-
     elemento.classList.toggle("d-none", deveOcultar);
 }
 
@@ -79,25 +77,72 @@ function aplicarControleAcessoPorPerfil() {
         exibirMensagem("info", "Acesso de paciente: Agendar Consulta e Consultório Virtual disponíveis.");
         return;
     }
-
     exibirMensagem("warning", "Perfil de acesso não reconhecido.");
 }
 
 function exibirMensagem(tipo, texto) {
     if (!mensagem) return;
-
     mensagem.replaceChildren();
-
     const alerta = document.createElement("div");
     alerta.className = `alert alert-${tipo}`;
     alerta.textContent = texto;
-
     mensagem.appendChild(alerta);
+
+    if (tipo === "danger") {
+        exibirPopupAmigavel("Não foi possível concluir", texto, "danger");
+    }
 }
 
 function limparMensagem() {
     if (!mensagem) return;
     mensagem.replaceChildren();
+}
+
+function exibirPopupAmigavel(titulo, texto, tipo = "primary") {
+    const modalElement = document.getElementById("modalConstrucao");
+    const textoModal = document.getElementById("textoModal");
+    const tituloModal = modalElement?.querySelector(".modal-title");
+    const cabecalhoModal = modalElement?.querySelector(".modal-header");
+
+    if (!modalElement || !textoModal || !tituloModal || !cabecalhoModal || !window.bootstrap) {
+        return;
+    }
+
+    tituloModal.textContent = titulo;
+    textoModal.textContent = texto;
+    cabecalhoModal.className = `modal-header bg-${tipo} text-white`;
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
+}
+
+function exibirCampoInvalido(campo) {
+    const rotulo = campo.labels?.[0]?.textContent?.trim();
+    const texto = rotulo
+        ? `${rotulo}: ${campo.validationMessage}`
+        : campo.validationMessage;
+
+    exibirMensagem("danger", texto);
+}
+
+function extrairMensagemErroApi(data, status) {
+    if (typeof data === "string") {
+        try {
+            return extrairMensagemErroApi(JSON.parse(data), status);
+        } catch {
+            return data || `Erro ${status} ao processar requisição.`;
+        }
+    }
+
+    if (data?.errors) {
+        return Object.values(data.errors).flat().join(" ");
+    }
+
+    return (
+        data?.message ||
+        data?.title ||
+        `Erro ${status} ao processar requisição.`
+    );
 }
 
 function exibirResultado(data) {
@@ -116,21 +161,17 @@ function aplicarMascaraDataBR(valor) {
     if (digitos.length > 0) {
         partes.push(digitos.slice(0, 2));
     }
-
     if (digitos.length > 2) {
         partes.push(digitos.slice(2, 4));
     }
-
     if (digitos.length > 4) {
         partes.push(digitos.slice(4, 8));
     }
-
     return partes.join("/");
 }
 
 function configurarMascaraDataBR(campo) {
     if (!campo) return;
-
     campo.addEventListener("input", function () {
         campo.value = aplicarMascaraDataBR(campo.value);
     });
@@ -142,9 +183,7 @@ function validarNumeroCartaoSUS(numeroCartaoSUS) {
 
 function validarCampoNumeroCartaoSUS(campo) {
     if (!campo) return true;
-
     const valor = campo.value.trim();
-
     if (!valor || validarNumeroCartaoSUS(valor)) {
         campo.setCustomValidity("");
         return true;
@@ -158,11 +197,9 @@ function validarSenhasIguais(senha, confirmarSenha, senhaObrigatoria) {
     if (senhaObrigatoria && !senha) {
         throw new Error("Informe a senha do usuário.");
     }
-
     if (senhaObrigatoria && !confirmarSenha) {
         throw new Error("Confirme a senha do usuário.");
     }
-
     if ((senha || confirmarSenha) && senha !== confirmarSenha) {
         throw new Error("As senhas digitadas não conferem.");
     }
@@ -172,27 +209,21 @@ function converterDataBRParaISO(dataBR) {
     if (!validarFormatoDataBR(dataBR)) {
         throw new Error("Formato de data inválido. Use DD/MM/AAAA.");
     }
-
     const [dia, mes, ano] = dataBR.split("/");
     const data = new Date(`${ano}-${mes}-${dia}T00:00:00`);
-
     if (isNaN(data.getTime())) {
         throw new Error("Data inválida.");
     }
-
     return data.toISOString();
 }
 
 function converterISOParaDataBR(dataISO) {
     if (!dataISO) return "";
-
     const data = new Date(dataISO);
     if (isNaN(data.getTime())) return "";
-
     const dia = String(data.getDate()).padStart(2, "0");
     const mes = String(data.getMonth() + 1).padStart(2, "0");
     const ano = data.getFullYear();
-
     return `${dia}/${mes}/${ano}`;
 }
 
@@ -204,7 +235,6 @@ async function chamarApi(url, metodo, body = null) {
             Authorization: `Bearer ${token}`
         }
     };
-
     if (body !== null) {
         options.body = JSON.stringify(body);
     }
@@ -220,17 +250,10 @@ async function chamarApi(url, metodo, body = null) {
     }
 
     if (!response.ok) {
-        const error = new Error(
-            data?.message ||
-            data?.title ||
-            data ||
-            `Erro ${response.status} ao processar requisição.`
-        );
-
+        const error = new Error(extrairMensagemErroApi(data, response.status));
         error.status = response.status;
         throw error;
     }
-
     return data;
 }
 // Mensagem de construção
@@ -238,7 +261,6 @@ async function chamarApi(url, metodo, body = null) {
 function paginaEmConstrucao(nome) {
     const modalElement = document.getElementById("modalConstrucao");
     const textoModal = document.getElementById("textoModal");
-
     if (!modalElement || !textoModal) {
         exibirMensagem("warning", `Modal não encontrado. ${nome} - página em construção.`);
         if (resultado) {
@@ -246,11 +268,8 @@ function paginaEmConstrucao(nome) {
         }
         return;
     }
-
     textoModal.textContent = `${nome} - página em construção. Esta funcionalidade será apresentada em uma próxima etapa do sistema.`;
-
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
+    exibirPopupAmigavel("Aviso", textoModal.textContent, "primary");
 }
 
 function obterValor(objeto, ...chaves) {
@@ -259,7 +278,6 @@ function obterValor(objeto, ...chaves) {
             return objeto[chave];
         }
     }
-
     return "";
 }
 // Limpeza e preenchimento de formulários
@@ -269,7 +287,6 @@ function limparSelecaoPessoa() {
         formAtualizacao.reset();
         formAtualizacao.classList.add("d-none");
     }
-
     const updIdPessoa = document.getElementById("updIdPessoa");
     const updIdUsuario = document.getElementById("updIdUsuario");
     const updIdPaciente = document.getElementById("updIdPaciente");
@@ -279,23 +296,18 @@ function limparSelecaoPessoa() {
     if (updIdUsuario) updIdUsuario.value = "";
     if (updIdPaciente) updIdPaciente.value = "";
     if (updIdProfissionalSaude) updIdProfissionalSaude.value = "";
-
     if (perfilComplementar) {
         perfilComplementar.value = "";
     }
-
     if (blocoUsuario) {
         blocoUsuario.classList.add("d-none");
     }
-
     if (blocoProfissional) {
         blocoProfissional.classList.add("d-none");
     }
-
     if (blocoPaciente) {
         blocoPaciente.classList.add("d-none");
     }
-
     if (cardPessoaSelecionada) {
         cardPessoaSelecionada.classList.add("d-none");
     }
@@ -314,13 +326,11 @@ function preencherFormularioPessoa(pessoa) {
     if (updIdPessoa) updIdPessoa.value = obterValor(pessoa, "idPessoa", "IdPessoa");
     if (updNome) updNome.value = obterValor(pessoa, "nome", "Nome");
     if (updCpf) updCpf.value = obterValor(pessoa, "cpf", "CPF", "Cpf");
-
     if (updDataNascimento) {
         updDataNascimento.value = converterISOParaDataBR(
             obterValor(pessoa, "dataNascimento", "DataNascimento")
         );
     }
-
     if (updEndereco) updEndereco.value = obterValor(pessoa, "endereco", "Endereco");
     if (updTelefone) updTelefone.value = obterValor(pessoa, "telefone", "Telefone");
     if (updAtivo) updAtivo.checked = obterValor(pessoa, "ativo", "Ativo") !== false;
@@ -538,6 +548,46 @@ function limparFormularioUsuario() {
     if (updUsuarioAtivo) updUsuarioAtivo.checked = true;
 }
 
+function obterPerfilUsuarioPorTipo(tipo) {
+    const perfis = {
+        admin: 1,
+        profissional: 2,
+        paciente: 3
+    };
+
+    return perfis[tipo] ?? "";
+}
+
+function obterTipoPorPerfilUsuario(perfil) {
+    const tipos = {
+        1: "admin",
+        2: "profissional",
+        3: "paciente"
+    };
+
+    return tipos[Number(perfil)] ?? "";
+}
+
+function sincronizarPerfilUsuario(tipo) {
+    const updPerfilUsuario = document.getElementById("updPerfilUsuario");
+
+    if (updPerfilUsuario) {
+        updPerfilUsuario.value = String(obterPerfilUsuarioPorTipo(tipo));
+    }
+}
+
+function configurarObrigatoriedadeUsuario(loginObrigatorio, senhaObrigatoria) {
+    const updEmailUsuario = document.getElementById("updEmailUsuario");
+    const updSenhaUsuario = document.getElementById("updSenhaUsuario");
+    const updConfirmarSenhaUsuario = document.getElementById("updConfirmarSenhaUsuario");
+    const updPerfilUsuario = document.getElementById("updPerfilUsuario");
+
+    if (updEmailUsuario) updEmailUsuario.required = loginObrigatorio;
+    if (updPerfilUsuario) updPerfilUsuario.required = loginObrigatorio;
+    if (updSenhaUsuario) updSenhaUsuario.required = senhaObrigatoria;
+    if (updConfirmarSenhaUsuario) updConfirmarSenhaUsuario.required = senhaObrigatoria;
+}
+
 function montarPayloadUsuarioCriacao(idPessoa) {
     const updEmailUsuario = document.getElementById("updEmailUsuario");
     const updSenhaUsuario = document.getElementById("updSenhaUsuario");
@@ -611,6 +661,20 @@ async function carregarUsuarioPorPessoa(idPessoa) {
     }) ?? null;
 }
 
+async function carregarUsuarioParaPerfil(idPessoa, tipo) {
+    const usuario = await carregarUsuarioPorPessoa(idPessoa);
+
+    if (usuario) {
+        preencherFormularioUsuario(usuario);
+    } else {
+        limparFormularioUsuario();
+    }
+
+    sincronizarPerfilUsuario(tipo);
+    configurarObrigatoriedadeUsuario(true, !usuario);
+    return usuario;
+}
+
 async function criarUsuario(payload) {
     return chamarApi(ENDPOINT_USUARIOS, "POST", payload);
 }
@@ -664,14 +728,19 @@ function montarPayloadProfissionalCriacao() {
     const updCodRegProf = document.getElementById("updCodRegProf");
     const updEspecialidade = document.getElementById("updEspecialidade");
     const codRegProf = updCodRegProf ? updCodRegProf.value.trim() : "";
+    const especialidade = updEspecialidade ? updEspecialidade.value.trim() : "";
 
     if (!codRegProf || !validarNumeroCartaoSUS(codRegProf)) {
         throw new Error("O Registro Profissional deve conter apenas números.");
     }
 
+    if (!especialidade) {
+        throw new Error("Informe a especialidade do profissional.");
+    }
+
     return {
         codRegProf,
-        especialidade: updEspecialidade ? updEspecialidade.value.trim() : ""
+        especialidade
     };
 }
 
@@ -803,7 +872,7 @@ function montarPayloadPacienteAtualizacao() {
 
     const numeroCartaoSUS = updNumeroCartaoSUS ? updNumeroCartaoSUS.value.trim() : "";
 
-    if (numeroCartaoSUS && !validarNumeroCartaoSUS(numeroCartaoSUS)) {
+    if (!numeroCartaoSUS || !validarNumeroCartaoSUS(numeroCartaoSUS)) {
         throw new Error("O número do Cartão SUS deve conter apenas números.");
     }
 
@@ -823,7 +892,7 @@ function montarPayloadPacienteCriacao() {
     const updAlergias = document.getElementById("updAlergias");
     const numeroCartaoSUS = updNumeroCartaoSUS ? updNumeroCartaoSUS.value.trim() : "";
 
-    if (numeroCartaoSUS && !validarNumeroCartaoSUS(numeroCartaoSUS)) {
+    if (!numeroCartaoSUS || !validarNumeroCartaoSUS(numeroCartaoSUS)) {
         throw new Error("O número do Cartão SUS deve conter apenas números.");
     }
 
@@ -923,8 +992,12 @@ async function excluirPaciente(idPaciente) {
 }
 
 function mostrarBlocosComplementares(tipo) {
+    const deveMostrarUsuario = ["admin", "profissional", "paciente"].includes(tipo);
+    const updIdUsuario = document.getElementById("updIdUsuario");
+    const usuarioNovo = !(updIdUsuario?.value);
+
     if (blocoUsuario) {
-        blocoUsuario.classList.toggle("d-none", tipo !== "usuario");
+        blocoUsuario.classList.toggle("d-none", !deveMostrarUsuario);
     }
 
     if (blocoProfissional) {
@@ -934,7 +1007,56 @@ function mostrarBlocosComplementares(tipo) {
     if (blocoPaciente) {
         blocoPaciente.classList.toggle("d-none", tipo !== "paciente");
     }
+
+    sincronizarPerfilUsuario(tipo);
+    configurarObrigatoriedadeUsuario(deveMostrarUsuario, deveMostrarUsuario && usuarioNovo);
 }
+
+async function carregarComplementosPessoaSelecionada(idPessoa) {
+    const [usuario, profissional, paciente] = await Promise.all([
+        carregarUsuarioPorPessoa(idPessoa),
+        carregarProfissionalPorPessoa(idPessoa),
+        carregarPacientePorPessoa(idPessoa)
+    ]);
+
+    let tipo = usuario
+        ? obterTipoPorPerfilUsuario(obterValor(usuario, "perfil", "Perfil"))
+        : "";
+
+    if (!tipo && profissional) {
+        tipo = "profissional";
+    }
+
+    if (!tipo && paciente) {
+        tipo = "paciente";
+    }
+
+    if (usuario) {
+        preencherFormularioUsuario(usuario);
+    } else {
+        limparFormularioUsuario();
+    }
+
+    if (profissional) {
+        preencherFormularioProfissional(profissional);
+    } else {
+        limparFormularioProfissional();
+    }
+
+    if (paciente) {
+        preencherFormularioPaciente(paciente);
+    } else {
+        limparFormularioPaciente();
+    }
+
+    if (perfilComplementar) {
+        perfilComplementar.value = tipo;
+    }
+
+    mostrarBlocosComplementares(tipo);
+}
+
+mostrarBlocosComplementares(perfilComplementar ? perfilComplementar.value : "");
 
 // Eventos
 if (btnListar) {
@@ -1068,14 +1190,7 @@ if (tabelaBuscaPessoa) {
 
                 preencherCardPessoaSelecionada(pessoa);
                 preencherFormularioPessoa(pessoa);
-                limparFormularioUsuario();
-                limparFormularioPaciente();
-                limparFormularioProfissional();
-                mostrarBlocosComplementares("");
-
-                if (perfilComplementar) {
-                    perfilComplementar.value = "";
-                }
+                await carregarComplementosPessoaSelecionada(idPessoa);
 
                 if (cardPessoaSelecionada) {
                     cardPessoaSelecionada.classList.remove("d-none");
@@ -1110,6 +1225,7 @@ if (tabelaBuscaPessoa) {
                 limparFormularioUsuario();
                 limparFormularioProfissional();
                 preencherFormularioPaciente(paciente);
+                await carregarUsuarioParaPerfil(idPessoa, "paciente");
                 mostrarBlocosComplementares("paciente");
 
                 if (perfilComplementar) {
@@ -1143,16 +1259,28 @@ if (tabelaBuscaPessoa) {
                 const idPessoa = botaoSelecionarUsuario.dataset.idPessoa;
                 const usuario = await carregarUsuario(idUsuario);
                 const pessoa = await carregarPessoaPorId(idPessoa);
+                const tipoUsuario = obterTipoPorPerfilUsuario(obterValor(usuario, "perfil", "Perfil"));
 
                 preencherCardPessoaSelecionada(pessoa);
                 preencherFormularioPessoa(pessoa);
                 preencherFormularioUsuario(usuario);
                 limparFormularioPaciente();
                 limparFormularioProfissional();
-                mostrarBlocosComplementares("usuario");
+
+                if (tipoUsuario === "paciente") {
+                    const paciente = await carregarPacientePorPessoa(idPessoa);
+                    if (paciente) preencherFormularioPaciente(paciente);
+                }
+
+                if (tipoUsuario === "profissional") {
+                    const profissional = await carregarProfissionalPorPessoa(idPessoa);
+                    if (profissional) preencherFormularioProfissional(profissional);
+                }
+
+                mostrarBlocosComplementares(tipoUsuario);
 
                 if (perfilComplementar) {
-                    perfilComplementar.value = "usuario";
+                    perfilComplementar.value = tipoUsuario;
                 }
 
                 if (cardPessoaSelecionada) {
@@ -1188,6 +1316,7 @@ if (tabelaBuscaPessoa) {
                 limparFormularioUsuario();
                 limparFormularioPaciente();
                 preencherFormularioProfissional(profissional);
+                await carregarUsuarioParaPerfil(idPessoa, "profissional");
                 mostrarBlocosComplementares("profissional");
 
                 if (perfilComplementar) {
@@ -1333,20 +1462,19 @@ if (perfilComplementar) {
             return;
         }
 
-        if (tipo === "usuario") {
+        if (tipo === "admin") {
             if (!idPessoa) {
                 exibirMensagem("warning", "Selecione uma pessoa antes de carregar o usuário.");
                 return;
             }
 
             try {
-                const usuario = await carregarUsuarioPorPessoa(idPessoa);
+                const usuario = await carregarUsuarioParaPerfil(idPessoa, tipo);
 
                 if (usuario) {
-                    preencherFormularioUsuario(usuario);
                     exibirMensagem("success", "Usuário carregado para edição.");
                 } else {
-                    limparFormularioUsuario();
+                    sincronizarPerfilUsuario(tipo);
                     exibirMensagem("warning", "Nenhum usuário encontrado para esta pessoa. Você pode criar um login agora.");
                 }
             } catch (error) {
@@ -1372,6 +1500,8 @@ if (perfilComplementar) {
                     limparFormularioProfissional();
                     exibirMensagem("warning", "Nenhum profissional encontrado para esta pessoa. Você pode criar um agora.");
                 }
+
+                await carregarUsuarioParaPerfil(idPessoa, tipo);
             } catch (error) {
                 exibirMensagem("danger", error.message);
             }
@@ -1395,6 +1525,8 @@ if (perfilComplementar) {
                     limparFormularioPaciente();
                     exibirMensagem("warning", "Nenhum paciente encontrado para esta pessoa. Você pode criar um agora.");
                 }
+
+                await carregarUsuarioParaPerfil(idPessoa, tipo);
             } catch (error) {
                 exibirMensagem("danger", error.message);
             }
@@ -1434,6 +1566,12 @@ if (updNumeroCartaoSUSCampo) {
 }
 
 if (formAtualizacao) {
+    formAtualizacao.addEventListener("invalid", function (event) {
+        event.preventDefault();
+        exibirCampoInvalido(event.target);
+        if (resultado) resultado.textContent = "";
+    }, true);
+
     formAtualizacao.addEventListener("submit", function (event) {
         const tipoPerfil = perfilComplementar ? perfilComplementar.value : "";
 
@@ -1470,71 +1608,54 @@ if (formAtualizacao) {
                 throw new Error("Nenhuma pessoa selecionada.");
             }
 
-            if (tipoPerfil === "usuario") {
+            if (["admin", "profissional", "paciente"].includes(tipoPerfil)) {
+                const payloadUsuario = idUsuario
+                    ? montarPayloadUsuarioAtualizacao()
+                    : montarPayloadUsuarioCriacao(idPessoa);
+                const payloadPaciente = tipoPerfil === "paciente"
+                    ? (idPaciente ? montarPayloadPacienteAtualizacao() : montarPayloadPacienteCriacao())
+                    : null;
+                const payloadProfissional = tipoPerfil === "profissional"
+                    ? (idProfissional ? montarPayloadProfissionalAtualizacao() : montarPayloadProfissionalCriacao())
+                    : null;
                 const payloadPessoa = montarPayloadPessoaAtualizacao();
                 await atualizarPessoa(idPessoa, payloadPessoa);
 
+                let perfilAtualizado = null;
                 let usuarioAtualizado;
+
+                if (tipoPerfil === "paciente") {
+                    perfilAtualizado = idPaciente
+                        ? await atualizarPaciente(idPaciente, payloadPaciente)
+                        : await criarPaciente(idPessoa, payloadPaciente);
+                    preencherFormularioPaciente(perfilAtualizado);
+                }
+
+                if (tipoPerfil === "profissional") {
+                    perfilAtualizado = idProfissional
+                        ? await atualizarProfissional(idProfissional, payloadProfissional)
+                        : await criarProfissional(idPessoa, payloadProfissional);
+                    preencherFormularioProfissional(perfilAtualizado);
+                }
 
                 if (idUsuario) {
                     usuarioAtualizado = await atualizarUsuario(
                         idUsuario,
-                        montarPayloadUsuarioAtualizacao()
+                        payloadUsuario
                     );
                     exibirMensagem("success", "Usuário atualizado com sucesso.");
                 } else {
                     usuarioAtualizado = await criarUsuario(
-                        montarPayloadUsuarioCriacao(idPessoa)
+                        payloadUsuario
                     );
                     preencherFormularioUsuario(usuarioAtualizado);
                     exibirMensagem("success", "Usuário criado com sucesso.");
                 }
 
-                exibirResultado(usuarioAtualizado);
-            } else if (tipoPerfil === "paciente") {
-                const payloadPessoa = montarPayloadPessoaAtualizacao();
-                await atualizarPessoa(idPessoa, payloadPessoa);
-
-                let pacienteAtualizado;
-
-                if (idPaciente) {
-                    pacienteAtualizado = await atualizarPaciente(
-                        idPaciente,
-                        montarPayloadPacienteAtualizacao()
-                    );
-                    exibirMensagem("success", "Paciente atualizado com sucesso.");
-                } else {
-                    pacienteAtualizado = await criarPaciente(
-                        idPessoa,
-                        montarPayloadPacienteCriacao()
-                    );
-                    preencherFormularioPaciente(pacienteAtualizado);
-                    exibirMensagem("success", "Paciente criado com sucesso.");
-                }
-
-                exibirResultado(pacienteAtualizado);
-            } else if (tipoPerfil === "profissional") {
-                const payloadPessoa = montarPayloadPessoaAtualizacao();
-                await atualizarPessoa(idPessoa, payloadPessoa);
-
-                let profissionalAtualizado;
-
-                if (idProfissional) {
-                    profissionalAtualizado = await atualizarProfissional(
-                        idProfissional,
-                        montarPayloadProfissionalAtualizacao()
-                    );
-                    exibirMensagem("success", "Profissional atualizado com sucesso.");
-                } else {
-                    profissionalAtualizado = await criarProfissional(
-                        idPessoa,
-                        montarPayloadProfissionalCriacao()
-                    );
-                    preencherFormularioProfissional(profissionalAtualizado);
-                    exibirMensagem("success", "Profissional criado com sucesso.");
-                }
-
-                exibirResultado(profissionalAtualizado);
+                exibirResultado({
+                    perfil: perfilAtualizado,
+                    usuario: usuarioAtualizado
+                });
             } else {
                 const payloadPessoa = montarPayloadPessoaAtualizacao();
                 const pessoaAtualizada = await atualizarPessoa(idPessoa, payloadPessoa);

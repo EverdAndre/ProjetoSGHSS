@@ -10,7 +10,6 @@ namespace SGHSS.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase().Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder
                 .CreateTable(
                     name: "Pessoas",
@@ -47,7 +46,6 @@ namespace SGHSS.Api.Migrations
                     }
                 )
                 .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder
                 .CreateTable(
                     name: "Pacientes",
@@ -85,7 +83,6 @@ namespace SGHSS.Api.Migrations
                     }
                 )
                 .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder
                 .CreateTable(
                     name: "ProfissionaisSaude",
@@ -120,7 +117,6 @@ namespace SGHSS.Api.Migrations
                     }
                 )
                 .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder
                 .CreateTable(
                     name: "Usuarios",
@@ -156,28 +152,24 @@ namespace SGHSS.Api.Migrations
                     }
                 )
                 .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Pacientes_IdPessoa",
                 table: "Pacientes",
                 column: "IdPessoa",
                 unique: true
             );
-
             migrationBuilder.CreateIndex(
                 name: "IX_ProfissionaisSaude_IdPessoa",
                 table: "ProfissionaisSaude",
                 column: "IdPessoa",
                 unique: true
             );
-
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_Email",
                 table: "Usuarios",
                 column: "Email",
                 unique: true
             );
-
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_IdPessoa",
                 table: "Usuarios",
@@ -189,11 +181,8 @@ namespace SGHSS.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(name: "Pacientes");
-
             migrationBuilder.DropTable(name: "ProfissionaisSaude");
-
             migrationBuilder.DropTable(name: "Usuarios");
-
             migrationBuilder.DropTable(name: "Pessoas");
         }
     }

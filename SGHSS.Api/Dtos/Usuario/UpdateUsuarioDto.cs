@@ -14,7 +14,6 @@ namespace SGHSS.Api.Dtos
         )]
         public string? Senha { get; set; }
         public bool? Ativo { get; set; }
-
         public PerfilUsuario? Perfil { get; set; }
     }
 }

@@ -45,7 +45,7 @@ h6 {
     border-radius: 16px;
 }
 
-.accordion-item + .accordion-item {
+.accordion-item+.accordion-item {
     margin-top: 16px;
 }
 

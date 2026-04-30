@@ -42,7 +42,6 @@ public class PessoasController : ControllerBase
                 Ativo = p.Ativo,
             })
             .ToListAsync();
-
         return Ok(pessoas);
     }
 
@@ -64,10 +63,8 @@ public class PessoasController : ControllerBase
                 Ativo = p.Ativo,
             })
             .FirstOrDefaultAsync();
-
         if (pessoa == null)
             return NotFound("Pessoa não encontrada");
-
         return Ok(pessoa);
     }
 
@@ -79,7 +76,6 @@ public class PessoasController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(nome))
             return BadRequest("Informe um nome para busca");
-
         var pessoas = await _context
             .Pessoas.Where(p => p.Ativo && p.Nome.Contains(nome))
             .Select(p => new PessoaResponseDto
@@ -94,7 +90,6 @@ public class PessoasController : ControllerBase
                 Ativo = p.Ativo,
             })
             .ToListAsync();
-
         return Ok(pessoas);
     }
 
@@ -103,14 +98,11 @@ public class PessoasController : ControllerBase
     public async Task<ActionResult<PessoaResponseDto>> CreatePessoa(CreatePessoaDto dto)
     {
         var cpfNormalizado = NormalizarCpf(dto.CPF);
-
         var cpfJaExiste = await _context.Pessoas.AnyAsync(p =>
             p.Ativo && p.CPF.Replace(".", "").Replace("-", "") == cpfNormalizado
         );
-
         if (cpfJaExiste)
             return BadRequest("CPF já cadastrado.");
-
         var pessoa = new Pessoa
         {
             Nome = dto.Nome.Trim(),
@@ -121,7 +113,6 @@ public class PessoasController : ControllerBase
             CriadoEm = DateTime.Now,
             Ativo = true,
         };
-
         _context.Pessoas.Add(pessoa);
         await _context.SaveChangesAsync();
         var response = new PessoaResponseDto
@@ -145,22 +136,18 @@ public class PessoasController : ControllerBase
         var pessoa = await _context.Pessoas.FirstOrDefaultAsync(p => p.IdPessoa == id && p.Ativo);
         if (pessoa == null)
             return NotFound("Pessoa não encontrada");
-
         if (!string.IsNullOrEmpty(dto.Nome))
             pessoa.Nome = dto.Nome.Trim();
         if (!string.IsNullOrEmpty(dto.CPF))
         {
             var cpfNormalizado = NormalizarCpf(dto.CPF);
-
             var cpfJaExiste = await _context.Pessoas.AnyAsync(p =>
                 p.IdPessoa != id
                 && p.Ativo
                 && p.CPF.Replace(".", "").Replace("-", "") == cpfNormalizado
             );
-
             if (cpfJaExiste)
                 return BadRequest("CPF já cadastrado.");
-
             pessoa.CPF = cpfNormalizado;
         }
         if (dto.DataNascimento.HasValue)

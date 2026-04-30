@@ -49,7 +49,6 @@ public class PacienteController : ControllerBase
                 CriadoEm = p.CriadoEm,
             })
             .ToListAsync();
-
         return Ok(pacientes);
     }
 
@@ -73,10 +72,8 @@ public class PacienteController : ControllerBase
                 CriadoEm = p.CriadoEm,
             })
             .FirstOrDefaultAsync();
-
         if (paciente == null)
             return NotFound("Paciente não encontrado.");
-
         return Ok(paciente);
     }
 
@@ -88,7 +85,6 @@ public class PacienteController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(nome))
             return BadRequest("Informe um nome para busca.");
-
         var pacientes = await _context
             .Pacientes.Include(p => p.Pessoa)
             .Where(p => p.Ativo && p.Pessoa.Ativo && p.Pessoa.Nome.Contains(nome.Trim()))
@@ -105,7 +101,6 @@ public class PacienteController : ControllerBase
                 CriadoEm = p.CriadoEm,
             })
             .ToListAsync();
-
         return Ok(pacientes);
     }
 
@@ -119,27 +114,20 @@ public class PacienteController : ControllerBase
         var pessoa = await _context.Pessoas.FirstOrDefaultAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
-
         if (pessoa == null)
             return BadRequest("Pessoa não encontrada.");
-
         var profissionalExiste = await _context.ProfissionaisSaude.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
-
         if (profissionalExiste)
             return BadRequest("Esta pessoa já possui um profissional de saúde cadastrado.");
-
         var pacienteExiste = await _context.Pacientes.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
-
         if (pacienteExiste)
             return BadRequest("Esta pessoa já possui um paciente cadastrado.");
-
         if (!ContemApenasDigitos(dto.NumeroCartaoSUS.Trim()))
             return BadRequest("O número do Cartão SUS deve conter apenas números.");
-
         var paciente = new Paciente
         {
             IdPessoa = idPessoa,
@@ -149,10 +137,8 @@ public class PacienteController : ControllerBase
             CriadoEm = DateTime.UtcNow,
             Ativo = true,
         };
-
         _context.Pacientes.Add(paciente);
         await _context.SaveChangesAsync();
-
         var response = new PacienteResponseDto
         {
             IdPaciente = paciente.IdPaciente,
@@ -165,7 +151,6 @@ public class PacienteController : ControllerBase
             Alergias = paciente.Alergias,
             CriadoEm = paciente.CriadoEm,
         };
-
         return CreatedAtAction(nameof(GetById), new { id = paciente.IdPaciente }, response);
     }
 
@@ -179,48 +164,35 @@ public class PacienteController : ControllerBase
         var paciente = await _context
             .Pacientes.Include(p => p.Pessoa)
             .FirstOrDefaultAsync(p => p.IdPaciente == id && p.Ativo && p.Pessoa.Ativo);
-
         if (paciente == null)
             return NotFound("Paciente não encontrado.");
-
         if (!string.IsNullOrWhiteSpace(dto.CPF))
         {
             var cpfNormalizado = NormalizarCpf(dto.CPF);
-
             var cpfExiste = await _context.Pessoas.AnyAsync(p =>
                 p.IdPessoa != paciente.IdPessoa
                 && p.Ativo
                 && p.CPF.Replace(".", "").Replace("-", "") == cpfNormalizado
             );
-
             if (cpfExiste)
                 return BadRequest("CPF já cadastrado.");
-
             paciente.Pessoa.CPF = cpfNormalizado;
         }
-
         if (!string.IsNullOrWhiteSpace(dto.Nome))
             paciente.Pessoa.Nome = dto.Nome.Trim();
-
         if (!string.IsNullOrWhiteSpace(dto.Telefone))
             paciente.Pessoa.Telefone = dto.Telefone.Trim();
-
         if (!string.IsNullOrWhiteSpace(dto.NumeroCartaoSUS))
         {
             if (!ContemApenasDigitos(dto.NumeroCartaoSUS.Trim()))
                 return BadRequest("O número do Cartão SUS deve conter apenas números.");
-
             paciente.NumeroCartaoSUS = dto.NumeroCartaoSUS.Trim();
         }
-
         if (!string.IsNullOrWhiteSpace(dto.TipoSanguineo))
             paciente.TipoSanguineo = dto.TipoSanguineo.Trim();
-
         if (!string.IsNullOrWhiteSpace(dto.Alergias))
             paciente.Alergias = dto.Alergias.Trim();
-
         await _context.SaveChangesAsync();
-
         var response = new PacienteResponseDto
         {
             IdPaciente = paciente.IdPaciente,
@@ -233,7 +205,6 @@ public class PacienteController : ControllerBase
             Alergias = paciente.Alergias,
             CriadoEm = paciente.CriadoEm,
         };
-
         return Ok(response);
     }
 
@@ -244,13 +215,10 @@ public class PacienteController : ControllerBase
         var paciente = await _context.Pacientes.FirstOrDefaultAsync(p =>
             p.IdPaciente == id && p.Ativo
         );
-
         if (paciente == null)
             return NotFound("Paciente não encontrado.");
-
         paciente.Ativo = false;
         await _context.SaveChangesAsync();
-
         return Ok("Paciente removido com sucesso.");
     }
 }

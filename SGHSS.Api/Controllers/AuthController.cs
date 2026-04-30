@@ -29,27 +29,21 @@ public class AuthController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Senha))
             return BadRequest("Email e senha são obrigatórios");
-
         var usuario = await _context
             .Usuarios.Include(u => u.Pessoa)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email == dto.Email);
-
         if (usuario == null)
             return Unauthorized("Usuário ou senha inválidos");
-
         if (!usuario.Ativo)
             return Unauthorized("Usuário inativo");
-
         var senhaValida = BCrypt.Net.BCrypt.Verify(dto.Senha, usuario.SenhaHash);
         if (!senhaValida)
             return Unauthorized("Usuário ou senha inválidos");
-
         var expiraEmHoras = int.TryParse(_configuration["Jwt:ExpiresInHours"], out var horas)
             ? horas
             : 2;
         var expiraEm = DateTime.UtcNow.AddHours(expiraEmHoras);
-
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, usuario.IdUsuario.ToString()),
@@ -68,9 +62,7 @@ public class AuthController : ControllerBase
             expires: expiraEm,
             signingCredentials: credenciais
         );
-
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
         var resposta = new
         {
             Token = tokenString,

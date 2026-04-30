@@ -268,10 +268,10 @@
 
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
-                                    <label for="perfilComplementar" class="form-label">Perfil Complementar</label>
+                                    <label for="perfilComplementar" class="form-label">Perfil da Pessoa</label>
                                     <select id="perfilComplementar" class="form-select">
                                         <option value="">Selecione</option>
-                                        <option value="usuario">Usuário</option>
+                                        <option value="admin">Administrador</option>
                                         <option value="profissional">Profissional de Saúde</option>
                                         <option value="paciente">Paciente</option>
                                     </select>
@@ -282,12 +282,11 @@
                                 <h6>Dados de Usuário</h6>
                                 <div class="row g-3">
                                     <input type="hidden" id="updIdUsuario">
-
+                                    <input type="hidden" id="updPerfilUsuario">
                                     <div class="col-md-6">
                                         <label for="updEmailUsuario" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="updEmailUsuario">
+                                        <input type="email" class="form-control" id="updEmailUsuario" required>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label for="updSenhaUsuario" class="form-label">Senha</label>
                                         <div class="input-group">
@@ -298,7 +297,6 @@
                                             </button>
                                         </div>
                                     </div>
-
                                     <div class="col-md-6">
                                         <label for="updConfirmarSenhaUsuario" class="form-label">Confirmar Senha</label>
                                         <div class="input-group">
@@ -309,17 +307,6 @@
                                             </button>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-6">
-                                        <label for="updPerfilUsuario" class="form-label">Perfil do Usuário</label>
-                                        <select id="updPerfilUsuario" class="form-select">
-                                            <option value="">Selecione</option>
-                                            <option value="1">Administrador</option>
-                                            <option value="2">Profissional de Saúde</option>
-                                            <option value="3">Paciente</option>
-                                        </select>
-                                    </div>
-
                                     <div class="col-md-6 d-flex align-items-end">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="updUsuarioAtivo"
