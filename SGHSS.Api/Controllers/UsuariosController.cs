@@ -24,20 +24,21 @@ public class UsuariosController : ControllerBase
         var possuiPaciente = await _context.Pacientes.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo && p.Pessoa.Ativo
         );
-
         var possuiProfissional = await _context.ProfissionaisSaude.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo && p.Pessoa.Ativo
         );
-
         if (perfil == PerfilUsuario.Admin && (possuiPaciente || possuiProfissional))
-            return BadRequest("Usuário administrador não deve estar vinculado a paciente ou profissional.");
-
+            return BadRequest(
+                "Usuário administrador não deve estar vinculado a paciente ou profissional."
+            );
         if (perfil == PerfilUsuario.Paciente && (!possuiPaciente || possuiProfissional))
-            return BadRequest("Usuário paciente deve estar vinculado somente a um cadastro de paciente.");
-
+            return BadRequest(
+                "Usuário paciente deve estar vinculado somente a um cadastro de paciente."
+            );
         if (perfil == PerfilUsuario.ProfissionalSaude && (!possuiProfissional || possuiPaciente))
-            return BadRequest("Usuário profissional deve estar vinculado somente a um cadastro de profissional de saúde.");
-
+            return BadRequest(
+                "Usuário profissional deve estar vinculado somente a um cadastro de profissional de saúde."
+            );
         return null;
     }
 
@@ -59,7 +60,6 @@ public class UsuariosController : ControllerBase
                 DataCriacao = u.DataCriacao,
             })
             .ToListAsync();
-
         return Ok(usuarios);
     }
 
@@ -81,10 +81,8 @@ public class UsuariosController : ControllerBase
                 DataCriacao = u.DataCriacao,
             })
             .FirstOrDefaultAsync();
-
         if (usuario == null)
             return NotFound("Usuário não encontrado.");
-
         return Ok(usuario);
     }
 
@@ -96,7 +94,6 @@ public class UsuariosController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(nome))
             return BadRequest("Informe um nome para busca.");
-
         var usuarios = await _context
             .Usuarios.Include(u => u.Pessoa)
             .Where(u => u.Ativo && u.Pessoa.Ativo && u.Pessoa.Nome.Contains(nome))
@@ -111,7 +108,6 @@ public class UsuariosController : ControllerBase
                 DataCriacao = u.DataCriacao,
             })
             .ToListAsync();
-
         return Ok(usuarios);
     }
 
@@ -122,28 +118,20 @@ public class UsuariosController : ControllerBase
         var pessoa = await _context.Pessoas.FirstOrDefaultAsync(p =>
             p.IdPessoa == dto.IdPessoa && p.Ativo
         );
-
         if (pessoa == null)
             return BadRequest("Pessoa não encontrada.");
-
         var usuarioExiste = await _context.Usuarios.AnyAsync(u => u.IdPessoa == dto.IdPessoa);
-
         if (usuarioExiste)
             return BadRequest("Esta pessoa já possui um usuário.");
-
         var emailNormalizado = dto.Email.Trim().ToLower();
-
         var emailExiste = await _context.Usuarios.AnyAsync(u =>
             u.Email.ToLower() == emailNormalizado
         );
-
         if (emailExiste)
             return BadRequest("Email já cadastrado.");
-
         var erroPerfil = await ValidarVinculoPerfilPessoa(dto.IdPessoa, dto.Perfil);
         if (erroPerfil != null)
             return erroPerfil;
-
         var usuario = new Usuario
         {
             IdPessoa = dto.IdPessoa,
@@ -153,10 +141,8 @@ public class UsuariosController : ControllerBase
             Ativo = true,
             DataCriacao = DateTime.UtcNow,
         };
-
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
-
         var response = new UsuarioResponseDto
         {
             IdUsuario = usuario.IdUsuario,
@@ -167,7 +153,6 @@ public class UsuariosController : ControllerBase
             Ativo = usuario.Ativo,
             DataCriacao = usuario.DataCriacao,
         };
-
         return Ok(response);
     }
 
@@ -178,45 +163,34 @@ public class UsuariosController : ControllerBase
         var usuario = await _context
             .Usuarios.Include(u => u.Pessoa)
             .FirstOrDefaultAsync(u => u.IdUsuario == id && u.Ativo && u.Pessoa.Ativo);
-
         if (usuario == null)
             return NotFound("Usuário não encontrado.");
-
         if (!string.IsNullOrWhiteSpace(dto.Email))
         {
             var emailNormalizado = dto.Email.Trim().ToLower();
-
             var emailExiste = await _context.Usuarios.AnyAsync(u =>
                 u.IdUsuario != id && u.Email.ToLower() == emailNormalizado
             );
-
             if (emailExiste)
                 return BadRequest("Email já cadastrado.");
-
             usuario.Email = emailNormalizado;
         }
-
         if (!string.IsNullOrWhiteSpace(dto.Senha))
         {
             usuario.SenhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
         }
-
         if (dto.Ativo.HasValue)
         {
             usuario.Ativo = dto.Ativo.Value;
         }
-
         if (dto.Perfil.HasValue)
         {
             var erroPerfil = await ValidarVinculoPerfilPessoa(usuario.IdPessoa, dto.Perfil.Value);
             if (erroPerfil != null)
                 return erroPerfil;
-
             usuario.Perfil = dto.Perfil.Value;
         }
-
         await _context.SaveChangesAsync();
-
         var response = new UsuarioResponseDto
         {
             IdUsuario = usuario.IdUsuario,
@@ -227,7 +201,6 @@ public class UsuariosController : ControllerBase
             Ativo = usuario.Ativo,
             DataCriacao = usuario.DataCriacao,
         };
-
         return Ok(response);
     }
 
@@ -238,14 +211,10 @@ public class UsuariosController : ControllerBase
         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
             u.IdUsuario == id && u.Ativo
         );
-
         if (usuario == null)
             return NotFound("Usuário não encontrado.");
-
         usuario.Ativo = false;
-
         await _context.SaveChangesAsync();
-
         return Ok("Usuário desativado com sucesso.");
     }
 }

@@ -44,7 +44,6 @@ public class ProfissionalController : ControllerBase
                 CriadoEm = p.CriadoEm,
             })
             .ToListAsync();
-
         return Ok(profissionais);
     }
 
@@ -68,10 +67,8 @@ public class ProfissionalController : ControllerBase
                 CriadoEm = p.CriadoEm,
             })
             .FirstOrDefaultAsync();
-
         if (profissional == null)
             return NotFound("Profissional não encontrado.");
-
         return Ok(profissional);
     }
 
@@ -83,7 +80,6 @@ public class ProfissionalController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(nome))
             return BadRequest("Informe um nome para busca.");
-
         var profissionais = await _context
             .ProfissionaisSaude.Include(p => p.Pessoa)
             .Where(p => p.Ativo && p.Pessoa.Ativo && p.Pessoa.Nome.Contains(nome.Trim()))
@@ -100,7 +96,6 @@ public class ProfissionalController : ControllerBase
                 CriadoEm = p.CriadoEm,
             })
             .ToListAsync();
-
         return Ok(profissionais);
     }
 
@@ -114,27 +109,20 @@ public class ProfissionalController : ControllerBase
         var pessoa = await _context.Pessoas.FirstOrDefaultAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
-
         if (pessoa == null)
             return BadRequest("Pessoa não encontrada.");
-
         var pacienteExiste = await _context.Pacientes.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
-
         if (pacienteExiste)
             return BadRequest("Esta pessoa já possui um paciente cadastrado.");
-
         var profissionalExiste = await _context.ProfissionaisSaude.AnyAsync(p =>
             p.IdPessoa == idPessoa && p.Ativo
         );
-
         if (profissionalExiste)
             return BadRequest("Esta pessoa já possui um profissional de saúde cadastrado.");
-
         if (!ContemApenasDigitos(dto.CodRegProf.Trim()))
             return BadRequest("O Registro Profissional deve conter apenas números.");
-
         var profissional = new ProfissionalSaude
         {
             IdPessoa = idPessoa,
@@ -143,10 +131,8 @@ public class ProfissionalController : ControllerBase
             CriadoEm = DateTime.UtcNow,
             Ativo = true,
         };
-
         _context.ProfissionaisSaude.Add(profissional);
         await _context.SaveChangesAsync();
-
         var response = new ProfissionalResponseDto
         {
             IdProfissionalSaude = profissional.IdProfissionalSaude,
@@ -159,8 +145,11 @@ public class ProfissionalController : ControllerBase
             Ativo = profissional.Ativo,
             CriadoEm = profissional.CriadoEm,
         };
-
-        return CreatedAtAction(nameof(GetById), new { id = profissional.IdProfissionalSaude }, response);
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = profissional.IdProfissionalSaude },
+            response
+        );
     }
 
     [Authorize(Roles = "Admin")]
@@ -173,28 +162,20 @@ public class ProfissionalController : ControllerBase
         var profissional = await _context
             .ProfissionaisSaude.Include(p => p.Pessoa)
             .FirstOrDefaultAsync(p => p.IdProfissionalSaude == id && p.Ativo && p.Pessoa.Ativo);
-
         if (profissional == null)
             return NotFound("Profissional não encontrado.");
-
         if (!string.IsNullOrWhiteSpace(dto.CodRegProf))
         {
             var codRegProf = dto.CodRegProf.Trim();
-
             if (!ContemApenasDigitos(codRegProf))
                 return BadRequest("O Registro Profissional deve conter apenas números.");
-
             profissional.CodRegProf = codRegProf;
         }
-
         if (!string.IsNullOrWhiteSpace(dto.Especialidade))
             profissional.Especialidade = dto.Especialidade.Trim();
-
         if (dto.Ativo.HasValue)
             profissional.Ativo = dto.Ativo.Value;
-
         await _context.SaveChangesAsync();
-
         var response = new ProfissionalResponseDto
         {
             IdProfissionalSaude = profissional.IdProfissionalSaude,
@@ -207,7 +188,6 @@ public class ProfissionalController : ControllerBase
             Ativo = profissional.Ativo,
             CriadoEm = profissional.CriadoEm,
         };
-
         return Ok(response);
     }
 
@@ -218,13 +198,10 @@ public class ProfissionalController : ControllerBase
         var profissional = await _context.ProfissionaisSaude.FirstOrDefaultAsync(p =>
             p.IdProfissionalSaude == id && p.Ativo
         );
-
         if (profissional == null)
             return NotFound("Profissional não encontrado.");
-
         profissional.Ativo = false;
         await _context.SaveChangesAsync();
-
         return Ok("Profissional removido com sucesso.");
     }
 }

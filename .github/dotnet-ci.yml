@@ -1,0 +1,28 @@
+name: .NET CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+
+      - name: Instalar .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restaurar dependências
+        run: dotnet restore ProjetoSGHSS.sln
+
+      - name: Compilar solução
+        run: dotnet build ProjetoSGHSS.sln --no-restore
+
+      - name: Executar testes
+        run: dotnet test ProjetoSGHSS.sln --no-build --verbosity normal

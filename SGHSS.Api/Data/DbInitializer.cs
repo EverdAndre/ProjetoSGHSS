@@ -13,18 +13,14 @@ public static class DbInitializer
         // Se já existe usuário, não faz nada
         if (context.Usuarios.Any())
             return;
-
         // Só cria usuário automático em desenvolvimento
         if (!env.IsDevelopment())
             return;
-
         var senhaInicial = configuration["Seed:AdminPassword"];
-
         if (string.IsNullOrWhiteSpace(senhaInicial))
         {
             throw new InvalidOperationException("Seed:AdminPassword não configurada.");
         }
-
         var pessoa = new Pessoa
         {
             Nome = "SGHSS Admin",
@@ -35,10 +31,8 @@ public static class DbInitializer
             CriadoEm = DateTime.Now,
             Ativo = true,
         };
-
         context.Pessoas.Add(pessoa);
         context.SaveChanges();
-
         var usuario = new Usuario
         {
             IdPessoa = pessoa.IdPessoa,
@@ -48,7 +42,6 @@ public static class DbInitializer
             Ativo = true,
             DataCriacao = DateTime.Now,
         };
-
         context.Usuarios.Add(usuario);
         context.SaveChanges();
     }

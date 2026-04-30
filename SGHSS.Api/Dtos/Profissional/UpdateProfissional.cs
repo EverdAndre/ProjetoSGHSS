@@ -13,6 +13,5 @@ public class UpdateProfissionalDto
 
     [StringLength(100)]
     public string? Especialidade { get; set; }
-
     public bool? Ativo { get; set; }
 }

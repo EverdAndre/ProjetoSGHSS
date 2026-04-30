@@ -16,23 +16,19 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
         modelBuilder
             .Entity<Paciente>()
             .HasOne(p => p.Pessoa)
             .WithOne(p => p.Paciente)
             .HasForeignKey<Paciente>(p => p.IdPessoa)
             .IsRequired();
-
         modelBuilder.Entity<Paciente>().HasIndex(p => p.IdPessoa).IsUnique();
-
         modelBuilder
             .Entity<Usuario>()
             .HasOne(u => u.Pessoa)
             .WithOne(p => p.Usuario)
             .HasForeignKey<Usuario>(u => u.IdPessoa)
             .IsRequired();
-
         modelBuilder.Entity<Usuario>().HasIndex(u => u.IdPessoa).IsUnique();
         modelBuilder.Entity<Usuario>().HasIndex(u => u.Email).IsUnique();
         modelBuilder
@@ -41,7 +37,6 @@ public class AppDbContext : DbContext
             .WithOne(p => p.ProfissionalSaude)
             .HasForeignKey<ProfissionalSaude>(ps => ps.IdPessoa)
             .IsRequired();
-
         modelBuilder.Entity<ProfissionalSaude>().HasIndex(ps => ps.IdPessoa).IsUnique();
         //Agendamento - Usuario
     }
