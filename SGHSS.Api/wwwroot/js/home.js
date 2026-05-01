@@ -22,6 +22,7 @@ const perfilComplementar = document.getElementById("perfilComplementar");
 const btnLimparAtualizacao = document.getElementById("btnLimparAtualizacao");
 const btnAgendarConsulta = document.getElementById("btnAgendarConsulta");
 const btnConsultorioVirtual = document.getElementById("btnConsultorioVirtual");
+const btnAgendaConsultas = document.getElementById("btnAgendaConsultas");
 const btnFinanceiro = document.getElementById("btnFinanceiro");
 const filtroListagem = document.getElementById("filtroListagem");
 const accordionHome = document.getElementById("accordionHome");
@@ -64,12 +65,13 @@ function aplicarControleAcessoPorPerfil() {
 
     ocultarElemento(btnAgendarConsulta?.closest(".col-md-4"), !ehPaciente);
     ocultarElemento(btnConsultorioVirtual?.closest(".col-md-4"), !(ehProfissional || ehPaciente));
+    ocultarElemento(btnAgendaConsultas?.closest(".col-md-4"), !ehProfissional);
     ocultarElemento(btnFinanceiro?.closest(".col-md-4"), true);
     ocultarElemento(accordionHome, true);
     ocultarElemento(resultado?.closest(".card"), true);
 
     if (ehProfissional) {
-        exibirMensagem("info", "Acesso de profissional: Consultório Virtual disponível.");
+        exibirMensagem("info", "Acesso de profissional: Consultório Virtual e Agenda de Consultas disponíveis.");
         return;
     }
 
@@ -1699,18 +1701,24 @@ if (btnLogout) {
 
 if (btnAgendarConsulta) {
     btnAgendarConsulta.addEventListener("click", function () {
-        paginaEmConstrucao("Agendar Consulta");
+        window.location.href = "/pages/agendarHome.html";
     });
 }
 
 if (btnConsultorioVirtual) {
     btnConsultorioVirtual.addEventListener("click", function () {
-        paginaEmConstrucao("Consultório Virtual");
+        window.location.href = "/pages/consultorioHome.html";
+    });
+}
+
+if (btnAgendaConsultas) {
+    btnAgendaConsultas.addEventListener("click", function () {
+        window.location.href = "/pages/consultorioHome.html?abrirAgenda=true";
     });
 }
 
 if (btnFinanceiro) {
     btnFinanceiro.addEventListener("click", function () {
-        paginaEmConstrucao("Financeiro");
+        window.location.href = "/pages/financeiroHome.html";
     });
 }

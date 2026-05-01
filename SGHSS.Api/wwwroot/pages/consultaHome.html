@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Atendimento - SGHSS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/consultaHome.css">
+</head>
+
+<body>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h1 class="mb-1">Atendimento</h1>
+                <p class="text-muted mb-0">SGHSS - consulta virtual em andamento</p>
+            </div>
+
+            <a class="btn btn-outline-light" href="/pages/consultorioHome.html">
+                Voltar
+            </a>
+        </div>
+
+        <div id="mensagemConsulta" class="mb-3"></div>
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Videochamada</h4>
+
+                        <div class="video-area">
+                            <div class="video-placeholder text-center">
+                                <h5 class="mb-2">Conexao da consulta virtual</h5>
+                                <p class="mb-0">
+                                    Em breve esta area exibira a videochamada entre profissional e paciente.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h4 class="card-title mb-3">Dados da Consulta</h4>
+
+                        <dl class="consulta-dados mb-0">
+                            <dt>Paciente</dt>
+                            <dd id="consultaPaciente">-</dd>
+
+                            <dt>Horario</dt>
+                            <dd id="consultaHorario">-</dd>
+
+                            <dt>Especialidade</dt>
+                            <dd id="consultaEspecialidade">-</dd>
+
+                            <dt>Status</dt>
+                            <dd id="consultaStatus">-</dd>
+                        </dl>
+
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-primary" id="btnVerDadosPaciente">
+                                Ver Dados do Paciente
+                            </button>
+
+                            <button type="button" class="btn btn-outline-primary" id="btnVerProntuario">
+                                Ver Prontuario
+                            </button>
+
+                            <button type="button" class="btn btn-outline-primary" id="btnCriarProntuario">
+                                Criar Prontuario
+                            </button>
+                        </div>
+
+                        <button type="button" class="btn btn-success w-100 mt-3" id="btnFinalizarConsulta">
+                            Finalizar Consulta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 d-none" id="cardDadosPaciente">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Dados do Paciente</h4>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <p class="info-label mb-1">Nome</p>
+                        <p class="info-value mb-0" id="pacienteNome">-</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p class="info-label mb-1">CPF</p>
+                        <p class="info-value mb-0" id="pacienteCpf">000.000.000-00</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p class="info-label mb-1">Telefone</p>
+                        <p class="info-value mb-0" id="pacienteTelefone">(00) 00000-0000</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p class="info-label mb-1">Tipo sanguineo</p>
+                        <p class="info-value mb-0">O+</p>
+                    </div>
+
+                    <div class="col-md-8">
+                        <p class="info-label mb-1">Alergias</p>
+                        <p class="info-value mb-0">Dipirona</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4 d-none" id="cardProntuario">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+                    <h4 class="card-title mb-0">Prontuario Medico</h4>
+                    <span class="badge bg-primary" id="statusProntuario">Prontuario existente</span>
+                </div>
+
+                <ul class="nav nav-tabs" id="abasProntuario" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="aba-anotacoes" data-bs-toggle="tab"
+                            data-bs-target="#painel-anotacoes" type="button" role="tab">
+                            Anotacoes
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="aba-documentos" data-bs-toggle="tab"
+                            data-bs-target="#painel-documentos" type="button" role="tab">
+                            Exames e Documentos
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation" id="itemAbaHistorico">
+                        <button class="nav-link" id="aba-historico" data-bs-toggle="tab"
+                            data-bs-target="#painel-historico" type="button" role="tab">
+                            Historico
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content border border-top-0 rounded-bottom p-3" id="conteudoProntuario">
+                    <div class="tab-pane fade show active" id="painel-anotacoes" role="tabpanel">
+                        <form id="formAnotacaoAtendimento">
+                            <div class="mb-3">
+                                <label for="anotacoesAtendimento" class="form-label">Anotacoes do atendimento</label>
+                                <textarea id="anotacoesAtendimento" class="form-control" rows="5"
+                                    placeholder="Registre sintomas, conduta, orientacoes e encaminhamentos"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">
+                                Salvar Anotacoes
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="painel-documentos" role="tabpanel">
+                        <form id="formDocumentoPaciente">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="tipoDocumento" class="form-label">Tipo</label>
+                                    <select id="tipoDocumento" class="form-select">
+                                        <option value="Exame">Exame</option>
+                                        <option value="Autorizacao">Autorizacao</option>
+                                        <option value="Receita">Receita</option>
+                                        <option value="Atestado">Atestado</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <label for="nomeDocumento" class="form-label">Descricao</label>
+                                    <input type="text" class="form-control" id="nomeDocumento"
+                                        placeholder="Ex: Hemograma, autorizacao de procedimento">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label for="arquivoDocumento" class="form-label">Arquivo</label>
+                                    <input type="file" class="form-control" id="arquivoDocumento">
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-success">
+                                        Incluir Documento
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="mt-4">
+                            <h5 class="section-title">Itens anexados</h5>
+                            <ul class="lista-prontuario" id="listaDocumentosPaciente"></ul>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="painel-historico" role="tabpanel">
+                        <h5 class="section-title">Historico do Paciente</h5>
+                        <ul class="lista-prontuario" id="listaHistoricoPaciente"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/consultaHome.js"></script>
+</body>
+
+</html>

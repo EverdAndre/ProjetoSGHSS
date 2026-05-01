@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agendar Consulta - SGHSS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/agendarHome.css">
+</head>
+
+<body>
+    <div class="container py-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h1 class="mb-1">Agendar Consulta</h1>
+                <p class="text-muted mb-0">SGHSS - escolha as informacoes para o novo agendamento</p>
+            </div>
+
+            <a class="btn btn-outline-light" href="/pages/home.html">
+                Voltar
+            </a>
+        </div>
+
+        <div id="mensagemAgendamento" class="mb-3"></div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Dados do Agendamento</h4>
+
+                <form id="formAgendamento">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="especialidade" class="form-label">Especialidade</label>
+                            <select id="especialidade" class="form-select">
+                                <option value="">Selecione</option>
+                                <option>Clinica Geral</option>
+                                <option>Cardiologia</option>
+                                <option>Dermatologia</option>
+                                <option>Pediatria</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="profissional" class="form-label">Profissional</label>
+                            <select id="profissional" class="form-select">
+                                <option value="">Selecione</option>
+                                <option>Dra. Ana Souza</option>
+                                <option>Dr. Carlos Lima</option>
+                                <option>Dra. Mariana Alves</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="dataConsulta" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="dataConsulta">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="horarioConsulta" class="form-label">Horario</label>
+                            <input type="time" class="form-control" id="horarioConsulta">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="tipoConsulta" class="form-label">Tipo</label>
+                            <select id="tipoConsulta" class="form-select">
+                                <option>Presencial</option>
+                                <option>Teleconsulta</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="observacoes" class="form-label">Observacoes</label>
+                            <textarea id="observacoes" class="form-control" rows="4"
+                                placeholder="Descreva brevemente o motivo da consulta"></textarea>
+                        </div>
+
+                        <div class="col-12 d-flex gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-success" id="btnConfirmarAgendamento">
+                                Agendar e Pagar
+                            </button>
+
+                            <a class="btn btn-secondary" href="/pages/home.html">
+                                Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Resumo</h5>
+                <p class="mb-0" id="resumoAgendamento">
+                    Esta e uma pagina estatica inicial. Depois ela podera ser ligada ao backend para listar
+                    profissionais, horarios disponiveis e salvar o agendamento no banco.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/agendarHome.js"></script>
+</body>
+
+</html>
