@@ -1,5 +1,7 @@
 namespace SGHSS.Api.Models;
+
 using System.ComponentModel.DataAnnotations;
+
 public class Pessoa
 {
     [Key]

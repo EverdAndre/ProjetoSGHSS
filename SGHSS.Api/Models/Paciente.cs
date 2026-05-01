@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace SGHSS.Api.Models;
+
 public class Paciente
 {
     [Key]

@@ -5,7 +5,7 @@ Sistema SGHSS desenvolvido em ASP.NET Core com Entity Framework Core e MySQL.
 O projeto entrega uma API REST e tambem uma interface web integrada feita com HTML, CSS, JavaScript e Bootstrap, servida pela propria aplicacao a partir da pasta `wwwroot`. A interface possui tela de login e tela principal para testar os fluxos do sistema.
 
 ## Pre-requisitos
-
+- Visual Studio Code ou IDE Similar para .Net
 - [.NET SDK 9](https://learn.microsoft.com/dotnet/core/install/windows)
 - [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/)
 - [Git](https://git-scm.com/downloads)
