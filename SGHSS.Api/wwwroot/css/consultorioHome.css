@@ -1,0 +1,195 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0d6efd, #6ea8fe);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    max-width: 1050px;
+}
+
+h1 {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.text-muted {
+    color: #e9ecef !important;
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.card-title,
+.sala-conteudo h5 {
+    color: #1d3557;
+    font-weight: 700;
+}
+
+.sala-consulta {
+    display: flex;
+    min-height: 120px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    background: #f8fbff;
+}
+
+.sala-conteudo {
+    max-width: 560px;
+    padding: 2rem;
+    color: #33415c;
+}
+
+.btn {
+    min-height: 44px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btn-outline-light:hover {
+    color: #0d6efd;
+}
+
+.form-label {
+    color: #33415c;
+    font-weight: 600;
+}
+
+.form-control,
+.form-select {
+    min-height: 44px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+textarea.form-control {
+    min-height: 96px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #f1f5f9;
+    color: #33415c;
+    font-weight: 700;
+}
+
+.badge-status {
+    border-radius: 999px;
+    padding: 0.45rem 0.7rem;
+    font-weight: 700;
+}
+
+.acoes-consulta {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.acoes-admin {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.admin-subtitle {
+    color: #64748b;
+}
+
+.status-card {
+    min-height: 112px;
+    padding: 1rem;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    background: #f8fbff;
+}
+
+.status-label {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-total {
+    color: #1d3557;
+    font-weight: 700;
+}
+
+.status-agendada {
+    border-left: 6px solid #0d6efd;
+}
+
+.status-atendimento {
+    border-left: 6px solid #198754;
+}
+
+.status-cancelada {
+    border-left: 6px solid #dc3545;
+}
+
+.status-remarcada {
+    border-left: 6px solid #ffc107;
+}
+
+#mensagemConsultorio .alert {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+#statusConsultorio {
+    color: #33415c;
+    line-height: 1.5;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .card {
+        border-radius: 14px;
+    }
+
+    .sala-consulta {
+        min-height: 120px;
+    }
+
+    .acoes-consulta {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

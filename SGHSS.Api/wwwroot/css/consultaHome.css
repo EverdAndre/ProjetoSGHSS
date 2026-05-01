@@ -1,0 +1,177 @@
+body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #0d6efd, #6ea8fe);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    max-width: 1150px;
+}
+
+h1 {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.text-muted {
+    color: #e9ecef !important;
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.card-title,
+.video-placeholder h5 {
+    color: #1d3557;
+    font-weight: 700;
+}
+
+.video-area {
+    display: flex;
+    min-height: 420px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    background: #0f172a;
+}
+
+.video-placeholder {
+    max-width: 520px;
+    padding: 2rem;
+    color: #dbeafe;
+}
+
+.video-placeholder h5 {
+    color: #ffffff;
+}
+
+.consulta-dados dt {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.consulta-dados dd {
+    color: #33415c;
+    margin-bottom: 1rem;
+}
+
+.info-label,
+.consulta-dados dt {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.info-value {
+    color: #33415c;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.form-label {
+    color: #33415c;
+    font-weight: 600;
+}
+
+.form-control,
+.form-select {
+    min-height: 44px;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+textarea.form-control {
+    min-height: 130px;
+}
+
+.nav-tabs .nav-link {
+    color: #33415c;
+    font-weight: 700;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+}
+
+.section-title {
+    color: #1d3557;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.lista-prontuario {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.lista-prontuario li {
+    padding: 0.9rem 1rem;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #f8fbff;
+    color: #33415c;
+}
+
+.lista-prontuario strong {
+    color: #1d3557;
+}
+
+.btn {
+    min-height: 44px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btn-outline-light:hover {
+    color: #0d6efd;
+}
+
+#mensagemConsulta .alert {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .card {
+        border-radius: 14px;
+    }
+
+    .video-area {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

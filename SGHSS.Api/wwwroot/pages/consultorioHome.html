@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Consultorio Virtual - SGHSS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/consultorioHome.css">
+</head>
+
+<body>
+    <div class="modal fade" id="modalConsultaVirtual" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Consulta Virtual</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    <p id="textoModalConsulta" class="mb-0 fs-5">
+                        Bem vindo a sua consulta virtual, em breve funcionalidade completa.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditarConsultaAdmin" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Editar Consulta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form id="formEditarConsultaAdmin">
+                    <div class="modal-body">
+                        <input type="hidden" id="editConsultaId">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="editHorarioConsulta" class="form-label">Horario</label>
+                                <input type="time" class="form-control" id="editHorarioConsulta">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="editStatusConsulta" class="form-label">Status</label>
+                                <select id="editStatusConsulta" class="form-select">
+                                    <option>Agendada</option>
+                                    <option>Em atendimento</option>
+                                    <option>Cancelada</option>
+                                    <option>Remarcada</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="editProfissionalConsulta" class="form-label">Profissional</label>
+                                <input type="text" class="form-control" id="editProfissionalConsulta">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="editObservacaoConsulta" class="form-label">Observacao</label>
+                                <textarea id="editObservacaoConsulta" class="form-control" rows="3"
+                                    placeholder="Motivo da remarcacao, cancelamento ou ajuste"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            Salvar Alteracoes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h1 class="mb-1">Consultorio Virtual</h1>
+                <p class="text-muted mb-0">SGHSS - ambiente de atendimento online</p>
+            </div>
+
+            <a class="btn btn-outline-light" href="/pages/home.html">
+                Voltar
+            </a>
+        </div>
+
+        <div id="mensagemConsultorio" class="mb-3"></div>
+
+        <div class="card shadow-sm mb-4 d-none" id="cardAcoesProfissional">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h4 class="card-title mb-1">Area do Profissional</h4>
+                        <p class="admin-subtitle mb-0">Acesse sua agenda sem precisar iniciar uma consulta.</p>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="btnVerAgendaProfissional">
+                        Ver Agenda de Consultas
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4" id="cardSalaConsulta">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Sala de Consulta</h4>
+
+                <div class="sala-consulta">
+                    <div class="sala-conteudo text-center">
+                        <h5 class="mb-2">Consulta virtual aguardando liberacao</h5>
+                        <p class="mb-0">
+                            O link de videochamada sera disponibilizado pelo administrador quando a funcionalidade
+                            completa estiver pronta.
+                        </p>
+
+                        <button type="button" class="btn btn-success mt-3" id="btnEntrarSalaConsulta">
+                            Entrar na Consulta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 d-none" id="cardAgendaProfissional">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Agenda de Consultas</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Horario</th>
+                                <th>Paciente</th>
+                                <th>Especialidade</th>
+                                <th>Status</th>
+                                <th class="text-end">Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaAgendaProfissional"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 d-none" id="cardConsultasAdmin">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+                    <div>
+                        <h4 class="card-title mb-1">Historico de Consultas</h4>
+                        <p class="admin-subtitle mb-0" id="dataConsultasAdmin">Visao administrativa</p>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-end mb-4">
+                    <div class="col-md-3">
+                        <label for="filtroPeriodoAdmin" class="form-label">Periodo</label>
+                        <select id="filtroPeriodoAdmin" class="form-select">
+                            <option value="todos">Todos</option>
+                            <option value="dia">Dia</option>
+                            <option value="mes">Mes</option>
+                            <option value="ano">Ano</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 campo-filtro-admin" id="campoFiltroDiaAdmin">
+                        <label for="filtroDiaAdmin" class="form-label">Dia</label>
+                        <input type="date" class="form-control" id="filtroDiaAdmin">
+                    </div>
+
+                    <div class="col-md-3 campo-filtro-admin d-none" id="campoFiltroMesAdmin">
+                        <label for="filtroMesAdmin" class="form-label">Mes</label>
+                        <input type="month" class="form-control" id="filtroMesAdmin">
+                    </div>
+
+                    <div class="col-md-3 campo-filtro-admin d-none" id="campoFiltroAnoAdmin">
+                        <label for="filtroAnoAdmin" class="form-label">Ano</label>
+                        <input type="number" class="form-control" id="filtroAnoAdmin" min="2000" max="2100">
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary w-100" id="btnAplicarFiltroAdmin">
+                            Aplicar Filtro
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="status-card status-agendada">
+                            <p class="status-label mb-1">Agendadas</p>
+                            <h3 class="status-total mb-0" id="totalAgendadas">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="status-card status-atendimento">
+                            <p class="status-label mb-1">Em atendimento</p>
+                            <h3 class="status-total mb-0" id="totalEmAtendimento">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="status-card status-cancelada">
+                            <p class="status-label mb-1">Canceladas</p>
+                            <h3 class="status-total mb-0" id="totalCanceladas">0</h3>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="status-card status-remarcada">
+                            <p class="status-label mb-1">Remarcadas</p>
+                            <h3 class="status-total mb-0" id="totalRemarcadas">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Horario</th>
+                                <th>Paciente</th>
+                                <th>Profissional</th>
+                                <th>Especialidade</th>
+                                <th>Status</th>
+                                <th class="text-end">Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaConsultasAdmin"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Status</h5>
+                <p class="mb-0" id="statusConsultorio">
+                    Esta e uma tela estatica inicial para o acesso do paciente ao consultorio virtual.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/consultorioHome.js"></script>
+</body>
+
+</html>

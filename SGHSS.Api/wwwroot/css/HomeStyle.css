@@ -94,6 +94,7 @@ h6 {
 
 #btnAgendarConsulta,
 #btnConsultorioVirtual,
+#btnAgendaConsultas,
 #btnFinanceiro {
     min-height: 58px;
     font-size: 1rem;
@@ -103,6 +104,7 @@ h6 {
 
 #btnAgendarConsulta:hover,
 #btnConsultorioVirtual:hover,
+#btnAgendaConsultas:hover,
 #btnFinanceiro:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 18px rgba(0, 0, 0, 0.14);
@@ -193,6 +195,7 @@ pre {
 
     #btnAgendarConsulta,
     #btnConsultorioVirtual,
+    #btnAgendaConsultas,
     #btnFinanceiro {
         min-height: 52px;
         font-size: 0.95rem;
