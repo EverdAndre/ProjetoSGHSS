@@ -40,14 +40,29 @@ function preencherTexto(id, texto) {
     if (elemento) elemento.textContent = texto;
 }
 
-function exibirMensagemPagamento(tipo, texto) {
+function criarAlertaPagamento(tipo, texto, link = null) {
+    const alerta = document.createElement("div");
+    alerta.className = `alert alert-${tipo} mb-0`;
+    alerta.setAttribute("role", "alert");
+    alerta.append(document.createTextNode(texto));
+
+    if (link) {
+        alerta.append(document.createTextNode(" "));
+        const ancora = document.createElement("a");
+        ancora.className = "alert-link";
+        ancora.href = link.href;
+        ancora.textContent = link.texto;
+        alerta.appendChild(ancora);
+        alerta.append(document.createTextNode("."));
+    }
+
+    return alerta;
+}
+
+function exibirMensagemPagamento(tipo, texto, link = null) {
     if (!mensagemPagamento) return;
 
-    mensagemPagamento.innerHTML = `
-        <div class="alert alert-${tipo} mb-0" role="alert">
-            ${texto}
-        </div>
-    `;
+    mensagemPagamento.replaceChildren(criarAlertaPagamento(tipo, texto, link));
 }
 
 function obterValorCampo(id) {
@@ -136,7 +151,11 @@ if (formPagamento) {
         formPagamento.classList.add("d-none");
         exibirMensagemPagamento(
             "success",
-            'Pagamento aprovado. Agenda concluida com sucesso. <a class="alert-link" href="/pages/home.html">Voltar para Home</a>.'
+            "Pagamento aprovado. Agenda concluida com sucesso.",
+            {
+                href: "/pages/home.html",
+                texto: "Voltar para Home"
+            }
         );
     });
 }

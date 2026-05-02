@@ -61,20 +61,29 @@ function obterValorCampo(id) {
     return campo ? campo.value.trim() : "";
 }
 
-function escaparHtml(texto) {
-    const div = document.createElement("div");
-    div.textContent = texto;
-    return div.innerHTML;
+function criarAlertaConsulta(tipo, texto, link = null) {
+    const alerta = document.createElement("div");
+    alerta.className = `alert alert-${tipo} mb-0`;
+    alerta.setAttribute("role", "alert");
+    alerta.append(document.createTextNode(texto));
+
+    if (link) {
+        alerta.append(document.createTextNode(" "));
+        const ancora = document.createElement("a");
+        ancora.className = "alert-link";
+        ancora.href = link.href;
+        ancora.textContent = link.texto;
+        alerta.appendChild(ancora);
+        alerta.append(document.createTextNode("."));
+    }
+
+    return alerta;
 }
 
-function exibirMensagemConsulta(tipo, texto) {
+function exibirMensagemConsulta(tipo, texto, link = null) {
     if (!mensagemConsulta) return;
 
-    mensagemConsulta.innerHTML = `
-        <div class="alert alert-${tipo} mb-0" role="alert">
-            ${texto}
-        </div>
-    `;
+    mensagemConsulta.replaceChildren(criarAlertaConsulta(tipo, texto, link));
 }
 
 function alternarCard(card) {
@@ -102,28 +111,41 @@ function configurarHistoricoProntuario(deveExibir) {
 function renderizarDocumentosPaciente() {
     if (!listaDocumentosPaciente) return;
 
-    listaDocumentosPaciente.innerHTML = documentosPaciente
-        .map((documento) => `
-            <li>
-                <strong>${escaparHtml(documento.tipo)}:</strong>
-                ${escaparHtml(documento.descricao)}
-                <span class="d-block text-muted">${escaparHtml(documento.arquivo)}</span>
-            </li>
-        `)
-        .join("");
+    const itens = documentosPaciente.map((documento) => {
+        const item = document.createElement("li");
+
+        const tipo = document.createElement("strong");
+        tipo.textContent = `${documento.tipo}:`;
+
+        const arquivo = document.createElement("span");
+        arquivo.className = "d-block text-muted";
+        arquivo.textContent = documento.arquivo;
+
+        item.append(tipo, document.createTextNode(` ${documento.descricao}`), arquivo);
+        return item;
+    });
+
+    listaDocumentosPaciente.replaceChildren(...itens);
 }
 
 function renderizarHistoricoPaciente() {
     if (!listaHistoricoPaciente) return;
 
-    listaHistoricoPaciente.innerHTML = historicoPaciente
-        .map((item) => `
-            <li>
-                <strong>${escaparHtml(item.data)}</strong>
-                <span class="d-block">${escaparHtml(item.descricao)}</span>
-            </li>
-        `)
-        .join("");
+    const itens = historicoPaciente.map((historico) => {
+        const item = document.createElement("li");
+
+        const data = document.createElement("strong");
+        data.textContent = historico.data;
+
+        const descricao = document.createElement("span");
+        descricao.className = "d-block";
+        descricao.textContent = historico.descricao;
+
+        item.append(data, descricao);
+        return item;
+    });
+
+    listaHistoricoPaciente.replaceChildren(...itens);
 }
 
 function carregarConsulta() {
@@ -216,7 +238,11 @@ if (btnFinalizarConsulta) {
         sessionStorage.removeItem("consultaEmAtendimento");
         exibirMensagemConsulta(
             "success",
-            'Consulta finalizada. <a class="alert-link" href="/pages/consultorioHome.html">Voltar para agenda</a>.'
+            "Consulta finalizada.",
+            {
+                href: "/pages/consultorioHome.html",
+                texto: "Voltar para agenda"
+            }
         );
         btnFinalizarConsulta.disabled = true;
     });
