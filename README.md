@@ -125,6 +125,23 @@ Perfil: Admin
 
 Use esse usuario no endpoint de login para obter o token JWT.
 
+## Acesso como Paciente ou Profissional de Saude
+
+Para acessar a interface como `Paciente` ou `ProfissionalSaude`, primeiro e necessario entrar como administrador e preparar o cadastro dessa pessoa.
+
+Fluxo recomendado pela interface web:
+
+1. Acesse `/pages/login.html` usando o usuario administrador inicial.
+2. Na Home, cadastre uma nova pessoa com nome, CPF, data de nascimento, endereco e telefone.
+3. Busque ou selecione essa pessoa na area de atualizacao de cadastro.
+4. No campo de perfil complementar, escolha `Paciente` ou `Profissional de Saude`.
+5. Preencha os dados especificos do perfil escolhido e salve.
+6. Ainda com a mesma pessoa selecionada, cadastre o usuario com email, senha e o mesmo perfil correspondente.
+7. Saia da conta admin.
+8. Entre novamente na tela de login usando o email e senha cadastrados para essa pessoa.
+
+Esse fluxo e necessario porque o sistema separa o cadastro da pessoa, o perfil assistencial e o usuario de acesso. Assim, um login de paciente precisa estar vinculado a uma pessoa que tambem possui cadastro de paciente, e um login de profissional precisa estar vinculado a uma pessoa que tambem possui cadastro de profissional de saude.
+
 ## Testando pela propria interface
 
 A aplicacao pode ser testada pela propria interface web, sem precisar de outro sistema cliente.
