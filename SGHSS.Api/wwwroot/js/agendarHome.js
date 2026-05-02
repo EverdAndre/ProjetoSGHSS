@@ -5,11 +5,11 @@ const resumoAgendamento = document.getElementById("resumoAgendamento");
 function exibirMensagemAgendamento(tipo, texto) {
     if (!mensagemAgendamento) return;
 
-    mensagemAgendamento.innerHTML = `
-        <div class="alert alert-${tipo} mb-0" role="alert">
-            ${texto}
-        </div>
-    `;
+    const alerta = document.createElement("div");
+    alerta.className = `alert alert-${tipo} mb-0`;
+    alerta.setAttribute("role", "alert");
+    alerta.textContent = texto;
+    mensagemAgendamento.replaceChildren(alerta);
 }
 
 function obterValorCampo(id) {

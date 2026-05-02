@@ -51,20 +51,21 @@ function obterValorCampo(id) {
     return campo ? campo.value.trim() : "";
 }
 
-function escaparHtml(texto) {
-    const div = document.createElement("div");
-    div.textContent = texto;
-    return div.innerHTML;
-}
-
 function exibirMensagemFinanceiro(tipo, texto) {
     if (!mensagemFinanceiro) return;
 
-    mensagemFinanceiro.innerHTML = `
-        <div class="alert alert-${tipo} mb-0" role="alert">
-            ${texto}
-        </div>
-    `;
+    const alerta = document.createElement("div");
+    alerta.className = `alert alert-${tipo} mb-0`;
+    alerta.setAttribute("role", "alert");
+    alerta.textContent = texto;
+    mensagemFinanceiro.replaceChildren(alerta);
+}
+
+function criarCelulaFinanceira(texto, classes = "") {
+    const celula = document.createElement("td");
+    if (classes) celula.className = classes;
+    celula.textContent = texto;
+    return celula;
 }
 
 function calcularTotais() {
@@ -101,40 +102,41 @@ function renderizarLancamentos() {
     const lancamentos = obterLancamentosFiltrados();
 
     if (lancamentos.length === 0) {
-        tabelaLancamentosFinanceiros.innerHTML = `
-            <tr>
-                <td colspan="5" class="text-center text-muted py-4">
-                    Nenhum lancamento encontrado.
-                </td>
-            </tr>
-        `;
+        const linha = document.createElement("tr");
+        const celula = criarCelulaFinanceira("Nenhum lancamento encontrado.", "text-center text-muted py-4");
+        celula.colSpan = 5;
+        linha.appendChild(celula);
+        tabelaLancamentosFinanceiros.replaceChildren(linha);
         return;
     }
 
-    tabelaLancamentosFinanceiros.innerHTML = lancamentos
-        .map((lancamento) => {
-            const ehReceita = lancamento.tipo === "receita";
-            const classeValor = ehReceita ? "text-success" : "text-danger";
-            const sinal = ehReceita ? "+" : "-";
-            const statusClasse = lancamento.status === "pago" ? "bg-success" : "bg-warning text-dark";
+    const linhas = lancamentos.map((lancamento) => {
+        const ehReceita = lancamento.tipo === "receita";
+        const classeValor = ehReceita ? "text-success" : "text-danger";
+        const sinal = ehReceita ? "+" : "-";
+        const statusClasse = lancamento.status === "pago" ? "bg-success" : "bg-warning text-dark";
 
-            return `
-                <tr>
-                    <td>${formatarData(lancamento.data)}</td>
-                    <td>${escaparHtml(lancamento.descricao)}</td>
-                    <td>${ehReceita ? "Receita" : "Despesa"}</td>
-                    <td>
-                        <span class="badge badge-status ${statusClasse}">
-                            ${lancamento.status}
-                        </span>
-                    </td>
-                    <td class="text-end ${classeValor} fw-bold">
-                        ${sinal} ${formatarMoeda(lancamento.valor)}
-                    </td>
-                </tr>
-            `;
-        })
-        .join("");
+        const linha = document.createElement("tr");
+        linha.appendChild(criarCelulaFinanceira(formatarData(lancamento.data)));
+        linha.appendChild(criarCelulaFinanceira(lancamento.descricao));
+        linha.appendChild(criarCelulaFinanceira(ehReceita ? "Receita" : "Despesa"));
+
+        const celulaStatus = document.createElement("td");
+        const badge = document.createElement("span");
+        badge.className = "badge badge-status";
+        statusClasse.split(" ").forEach((classe) => badge.classList.add(classe));
+        badge.textContent = lancamento.status;
+        celulaStatus.appendChild(badge);
+        linha.appendChild(celulaStatus);
+
+        linha.appendChild(
+            criarCelulaFinanceira(`${sinal} ${formatarMoeda(lancamento.valor)}`, `text-end ${classeValor} fw-bold`)
+        );
+
+        return linha;
+    });
+
+    tabelaLancamentosFinanceiros.replaceChildren(...linhas);
 }
 
 function atualizarTelaFinanceira() {

@@ -117,14 +117,33 @@ function normalizarPerfil(perfil) {
     return (perfil ?? "").toLowerCase();
 }
 
+function criarAlerta(tipo, texto) {
+    const alerta = document.createElement("div");
+    alerta.className = `alert alert-${tipo} mb-0`;
+    alerta.setAttribute("role", "alert");
+    alerta.textContent = texto;
+    return alerta;
+}
+
+function criarCelula(texto, classes = "") {
+    const celula = document.createElement("td");
+    if (classes) celula.className = classes;
+    celula.textContent = texto;
+    return celula;
+}
+
+function criarBadgeStatus(texto, classes) {
+    const badge = document.createElement("span");
+    badge.className = "badge badge-status";
+    classes.split(" ").filter(Boolean).forEach((classe) => badge.classList.add(classe));
+    badge.textContent = texto;
+    return badge;
+}
+
 function exibirMensagemConsultorio(tipo, texto) {
     if (!mensagemConsultorio) return;
 
-    mensagemConsultorio.innerHTML = `
-        <div class="alert alert-${tipo} mb-0" role="alert">
-            ${texto}
-        </div>
-    `;
+    mensagemConsultorio.replaceChildren(criarAlerta(tipo, texto));
 }
 
 function abrirModalConsultaPaciente() {
@@ -189,40 +208,42 @@ function renderizarConsultasAdmin() {
     const consultas = obterConsultasAdminFiltradas();
 
     if (consultas.length === 0) {
-        tabelaConsultasAdmin.innerHTML = `
-            <tr>
-                <td colspan="7" class="text-center text-muted py-4">
-                    Nenhuma consulta encontrada para o filtro selecionado.
-                </td>
-            </tr>
-        `;
+        const linha = document.createElement("tr");
+        const celula = criarCelula("Nenhuma consulta encontrada para o filtro selecionado.", "text-center text-muted py-4");
+        celula.colSpan = 7;
+        linha.appendChild(celula);
+        tabelaConsultasAdmin.replaceChildren(linha);
         return;
     }
 
-    tabelaConsultasAdmin.innerHTML = consultas
-        .map((consulta) => `
-            <tr>
-                <td>${formatarDataIso(consulta.data)}</td>
-                <td>${consulta.horario}</td>
-                <td>${consulta.paciente}</td>
-                <td>${consulta.profissional}</td>
-                <td>${consulta.especialidade}</td>
-                <td>
-                    <span class="badge badge-status ${obterClasseStatus(consulta.status)}">
-                        ${consulta.status}
-                    </span>
-                </td>
-                <td>
-                    <div class="acoes-admin">
-                        <button type="button" class="btn btn-outline-primary btn-sm btn-editar-admin"
-                            data-id="${consulta.id}">
-                            Editar
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `)
-        .join("");
+    const linhas = consultas.map((consulta) => {
+        const linha = document.createElement("tr");
+        linha.appendChild(criarCelula(formatarDataIso(consulta.data)));
+        linha.appendChild(criarCelula(consulta.horario));
+        linha.appendChild(criarCelula(consulta.paciente));
+        linha.appendChild(criarCelula(consulta.profissional));
+        linha.appendChild(criarCelula(consulta.especialidade));
+
+        const celulaStatus = document.createElement("td");
+        celulaStatus.appendChild(criarBadgeStatus(consulta.status, obterClasseStatus(consulta.status)));
+        linha.appendChild(celulaStatus);
+
+        const celulaAcoes = document.createElement("td");
+        const acoes = document.createElement("div");
+        acoes.className = "acoes-admin";
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "btn btn-outline-primary btn-sm btn-editar-admin";
+        botao.dataset.id = consulta.id;
+        botao.textContent = "Editar";
+        acoes.appendChild(botao);
+        celulaAcoes.appendChild(acoes);
+        linha.appendChild(celulaAcoes);
+
+        return linha;
+    });
+
+    tabelaConsultasAdmin.replaceChildren(...linhas);
 }
 
 function atualizarTotaisAdmin() {
@@ -344,32 +365,40 @@ function configurarVisaoAdmin() {
 function renderizarAgendaProfissional() {
     if (!tabelaAgendaProfissional) return;
 
-    tabelaAgendaProfissional.innerHTML = consultasProfissional
-        .map((consulta) => `
-            <tr>
-                <td>${consulta.horario}</td>
-                <td>${consulta.paciente}</td>
-                <td>${consulta.especialidade}</td>
-                <td>
-                    <span class="badge bg-primary badge-status">
-                        ${consulta.status}
-                    </span>
-                </td>
-                <td>
-                    <div class="acoes-consulta">
-                        <button type="button" class="btn btn-outline-primary btn-sm btn-remarcar"
-                            data-id="${consulta.id}">
-                            Remarcar
-                        </button>
-                        <button type="button" class="btn btn-success btn-sm btn-atender"
-                            data-id="${consulta.id}">
-                            Atender
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `)
-        .join("");
+    const linhas = consultasProfissional.map((consulta) => {
+        const linha = document.createElement("tr");
+        linha.appendChild(criarCelula(consulta.horario));
+        linha.appendChild(criarCelula(consulta.paciente));
+        linha.appendChild(criarCelula(consulta.especialidade));
+
+        const celulaStatus = document.createElement("td");
+        celulaStatus.appendChild(criarBadgeStatus(consulta.status, "bg-primary"));
+        linha.appendChild(celulaStatus);
+
+        const celulaAcoes = document.createElement("td");
+        const acoes = document.createElement("div");
+        acoes.className = "acoes-consulta";
+
+        const botaoRemarcar = document.createElement("button");
+        botaoRemarcar.type = "button";
+        botaoRemarcar.className = "btn btn-outline-primary btn-sm btn-remarcar";
+        botaoRemarcar.dataset.id = consulta.id;
+        botaoRemarcar.textContent = "Remarcar";
+
+        const botaoAtender = document.createElement("button");
+        botaoAtender.type = "button";
+        botaoAtender.className = "btn btn-success btn-sm btn-atender";
+        botaoAtender.dataset.id = consulta.id;
+        botaoAtender.textContent = "Atender";
+
+        acoes.append(botaoRemarcar, botaoAtender);
+        celulaAcoes.appendChild(acoes);
+        linha.appendChild(celulaAcoes);
+
+        return linha;
+    });
+
+    tabelaAgendaProfissional.replaceChildren(...linhas);
 }
 
 function obterConsultaPorId(id) {
