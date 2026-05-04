@@ -80,7 +80,7 @@ dotnet user-secrets set "Seed:AdminPassword" "Admin@123" --project SGHSS.Api
 ### 4. Rodar a API
 
 ```bash
-dotnet run --launch-profile https
+dotnet run --project .\SGHSS.Api\SGHSS.Api.csproj --launch-profile https
 ```
 
 Ao iniciar, a API aplica as migrations automaticamente e cria um usuario admin inicial em ambiente de desenvolvimento.
