@@ -7,6 +7,8 @@ O projeto entrega uma API REST e tambem uma interface web integrada feita com HT
 ## Pre-requisitos
 - Visual Studio Code ou IDE Similar para .Net
 - [.NET SDK 9](https://learn.microsoft.com/dotnet/core/install/windows)
+procure e baixe a versão 9.0.15.
+- C# Dev Kit extensão do VSCode
 - [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/)
 - [Git](https://git-scm.com/downloads)
 - Navegador de Internet, como Chrome, Edge ou Firefox
