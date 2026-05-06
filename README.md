@@ -306,3 +306,25 @@ Parar e apagar os dados do banco:
 ```bash
 docker compose down -v
 ```
+## Telas principais
+
+### Login
+![Tela de login](assets/screenshots/login.png)
+
+### Dashboard do paciente
+![Dashboard do paciente](assets/screenshots/homepaciente.png)
+
+### Dashboard do profissional de saude
+![Dashboard do profissional](assets/screenshots/homeprofissional.png)
+
+### Dashboard do Admin
+![Dashboard do paciente](assets/screenshots/homeadmin.png)
+
+### Consultório
+![Tela de Consultório](assets/screenshots/consultorio.png)
+
+### Agenda
+![Tela de Agendamento](assets/screenshots/agendamento.png)
+
+### Financeiro
+![Tela de Financeiro](assets/screenshots/financeiro.png)
