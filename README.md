@@ -1,4 +1,4 @@
-# SGHSS API
+# SGHSS (Sistema de Gestão Hospitalar e Serviços de Saúde)
 
 Sistema SGHSS desenvolvido em ASP.NET Core com Entity Framework Core e MySQL.
 
